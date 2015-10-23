@@ -20,9 +20,13 @@ public class CCWebSocketConnector {
     WebSocketClient client;
     CCWebSocket socket;
     URI uri;
-
+    
     public boolean sendPatch() {
-        String patchRequest = "{\"Tag\": 112, \"Action\": \"Change\", \"Resource\": \"File\", \"ResId\": \"5629a0c2111aeb63cf000002\", \"FileVersion\":"+System.currentTimeMillis()+", \"Changes\": \"@@ -40,16 +40,17 @@\\n almost i\\n+t\\n n shape\", \"UserId\": \"56297d8e111aeb5f53000001\", \"Token\": \"token-fahslaj\"}";
+    	return sendPatch ("{\"Tag\": 112, \"Action\": \"Change\", \"Resource\": \"File\", \"ResId\": \"5629a0c2111aeb63cf000002\", \"FileVersion\":"+System.currentTimeMillis()+", \"Changes\": \"@@ -40,16 +40,17 @@\\n almost i\\n+t\\n n shape\", \"UserId\": \"56297d8e111aeb5f53000001\", \"Token\": \"token-fahslaj\"}");
+    }
+    
+    public boolean sendPatch(String patch) {
+        String patchRequest = patch;
         try {
             socket.sendMessage(patchRequest);
         } catch (Exception e) {

@@ -24,18 +24,18 @@ public class CCView extends ViewPart {
        label.setText("CodeCollaborate");
        start = new Button(parent, SWT.PUSH);
        start.setText("Start");
-       EditorListener el = new EditorListener();
+       CCCore core = new CCCore();
        start.addSelectionListener(new SelectionListener() {
 
     	   @Override
     	   public void widgetDefaultSelected(SelectionEvent arg0) {
-    		   el.listen();
+    		   core.begin();
     		   //System.out.println("It worked! (Default)");
     	   }
 
     	   @Override
     	   public void widgetSelected(SelectionEvent arg0) {
-    		   el.listen();
+    		   core.begin();
     		   //System.out.println("It worked!");
     	   }
        });

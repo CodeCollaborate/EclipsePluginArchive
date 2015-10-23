@@ -7,13 +7,17 @@ import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.ui.texteditor.ITextEditor;
+
+import codecollaborateeclipse.CCWebSocketConnector;
 import codecollaborateeclipse.PatchHandler;
 
 
 public class EditorListener {
 	
-	public EditorListener() {
-		
+	CCWebSocketConnector connector;
+	
+	public EditorListener(CCWebSocketConnector connector) {
+		this.connector = connector;
 	}
 	
 	public void listen() {
@@ -32,7 +36,8 @@ public class EditorListener {
 	        public void documentChanged(DocumentEvent event) {
 	            //System.out.println("Change happened: " + event.toString());
 	        	String p = patchy.createPatchString(oldDoc, doc.get());
-	        	System.out.println(p);
+	        	connector.sendPatch(p);
+	        	//System.out.println(p);
 	        }
 
 	        @Override
