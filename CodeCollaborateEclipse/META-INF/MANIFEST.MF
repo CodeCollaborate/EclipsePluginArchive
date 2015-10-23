@@ -12,3 +12,15 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.jface.text;bundle-version="3.10.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
+Bundle-ClassPath: .,
+ lib/jetty-http-9.3.5.v20151012.jar,
+ lib/jetty-io-9.3.5.v20151012.jar,
+ lib/jetty-security-9.3.5.v20151012.jar,
+ lib/jetty-server-9.3.5.v20151012.jar,
+ lib/jetty-servlet-9.3.5.v20151012.jar,
+ lib/jetty-util-9.3.5.v20151012.jar,
+ lib/websocket-api-9.3.5.v20151012.jar,
+ lib/websocket-client-9.3.5.v20151012.jar,
+ lib/websocket-common-9.3.5.v20151012.jar,
+ lib/websocket-server-9.3.5.v20151012.jar,
+ lib/websocket-servlet-9.3.5.v20151012.jar
