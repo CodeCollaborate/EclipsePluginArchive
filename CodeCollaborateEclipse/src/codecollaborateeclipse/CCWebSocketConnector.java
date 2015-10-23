@@ -26,7 +26,7 @@ public class CCWebSocketConnector {
     }
     
     public boolean sendPatch(String patch) {
-        String patchRequest = patch;
+        String patchRequest = "{\"Tag\": 112, \"Action\": \"Change\", \"Resource\": \"File\", \"ResId\": \"5629a0c2111aeb63cf000002\", \"FileVersion\":"+System.currentTimeMillis()+", \"Changes\": \""+patch.replaceAll("\n", "")+"\", \"UserId\": \"56297d8e111aeb5f53000001\", \"Token\": \"token-fahslaj\"}";
         try {
             socket.sendMessage(patchRequest);
         } catch (Exception e) {

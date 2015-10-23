@@ -52,6 +52,7 @@ public class CCWebSocket {
     public boolean sendMessage(String msg) throws Exception {
         if (session == null)
             throw new Exception("Session is null");
+        System.out.println("Sending: "+msg);
         Future<Void> fut;
         fut = session.getRemote().sendStringByFuture(msg);
         boolean done = false;
