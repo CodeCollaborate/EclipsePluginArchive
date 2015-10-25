@@ -53,7 +53,8 @@ public class Notification {
     }
 
     @JsonIgnoreProperties(ignoreUnknown=true)
-    static class NotificationData{
-        
+    public static class NotificationData{
+        public String Changes;
+        public Long FileVersion;
     }
 }

@@ -6,6 +6,9 @@ import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
+
+import codecollaborateeclipse.listener.EditorListener;
+
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -16,6 +19,7 @@ import java.util.concurrent.TimeUnit;
 @WebSocket(maxTextMessageSize = 64 * 1024)
 public class CCWebSocket {
     private final CountDownLatch closeLatch;
+    private EditorListener listener;
 
     @SuppressWarnings("unused")
     private Session session;
@@ -72,8 +76,13 @@ public class CCWebSocket {
     @OnWebSocketMessage
     public void onMessage(String msg) {
         System.out.println("Stuff has happened: "+msg);
+        this.listener.recievePatch(msg);
     }
-
+    
+    public void setEditorListener(EditorListener l) {
+    	this.listener = l;
+    }
+    
     public boolean sessionNull() {
         return session == null;
     }

@@ -22,6 +22,7 @@ public class CCCore {
         }
         this.connector.login();
         this.connector.subscribe();
+        this.connector.socket.setEditorListener(this.listener);
         this.listener.listen();
 		
 	}
