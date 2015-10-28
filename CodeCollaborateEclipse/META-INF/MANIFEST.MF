@@ -26,4 +26,5 @@ Bundle-ClassPath: .,
  lib/websocket-servlet-9.3.5.v20151012.jar,
  lib/jackson-annotations-2.6.0.jar,
  lib/jackson-core-2.6.3.jar,
- lib/jackson-databind-2.6.3.jar
+ lib/jackson-databind-2.6.3.jar,
+ lib/json-20150729.jar

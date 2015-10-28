@@ -56,5 +56,17 @@ public class Notification {
     public static class NotificationData{
         public String Changes;
         public Long FileVersion;
+		public String getChanges() {
+			return Changes;
+		}
+		public void setChanges(String changes) {
+			Changes = changes;
+		}
+		public Long getFileVersion() {
+			return FileVersion;
+		}
+		public void setFileVersion(Long fileVersion) {
+			FileVersion = fileVersion;
+		}
     }
 }

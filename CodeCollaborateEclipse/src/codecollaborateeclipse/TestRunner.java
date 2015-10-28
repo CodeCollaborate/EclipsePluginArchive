@@ -28,8 +28,9 @@ public class TestRunner {
     }
 
     public static void test() {
+    	CCWebSocketConnector connector = new CCWebSocketConnector();
         WebSocketClient client = new WebSocketClient();
-        CCWebSocket socket = new CCWebSocket();
+        CCWebSocket socket = new CCWebSocket(connector);
         boolean closeStatus = false;
         try {
             client.start();

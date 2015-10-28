@@ -11,6 +11,7 @@ public class CCCore {
 	public CCCore() {
 		this.connector = new CCWebSocketConnector();
 		this.listener = new EditorListener(this.connector);
+		this.connector.setEditorListener(this.listener);
 	}
 	
 	public void begin() {
@@ -22,7 +23,6 @@ public class CCCore {
         }
         this.connector.login();
         this.connector.subscribe();
-        this.connector.socket.setEditorListener(this.listener);
         this.listener.listen();
 		
 	}

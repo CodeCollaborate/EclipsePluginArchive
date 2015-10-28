@@ -43,7 +43,7 @@ public class EditorListener {
 			public void documentChanged(DocumentEvent event) {
 				// System.out.println("Change happened: " + event.toString());
 				String p = patchy.createPatchString(oldDoc, doc.get());
-				connector.sendPatch(p);
+				sendPatch(p);
 				// System.out.println(p);
 			}
 
@@ -77,6 +77,10 @@ public class EditorListener {
 			
 		});
 
+	}
+	
+	public void sendPatch(String msg) {
+		connector.sendPatch(msg);
 	}
 
 }

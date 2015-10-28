@@ -2,11 +2,17 @@ package codecollaborateeclipse;
 
 import org.eclipse.jetty.websocket.client.ClientUpgradeRequest;
 import org.eclipse.jetty.websocket.client.WebSocketClient;
+import org.json.JSONObject;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import codecollaborateeclipse.listener.EditorListener;
 import codecollaborateeclipse.models.FileChangeRequest;
 import codecollaborateeclipse.models.LoginRequest;
+import codecollaborateeclipse.models.Notification;
+import codecollaborateeclipse.models.Response;
 import codecollaborateeclipse.models.SubscribeRequest;
 
 import java.io.IOException;
@@ -24,10 +30,15 @@ public class CCWebSocketConnector {
     private Queue requestQueue;
     private HashMap requestMap;
     private ObjectMapper mapper = new ObjectMapper();
+    private EditorListener listener;
 
     WebSocketClient client;
     CCWebSocket socket;
     URI uri;
+    
+    public void setEditorListener(EditorListener listener) {
+    	this.listener = listener;
+    }
     
     public boolean sendPatch() {
     	return sendPatch ("@@ -40,16 +40,17 @@\\n almost i\\n+t\\n n shape");
@@ -97,8 +108,11 @@ public class CCWebSocketConnector {
     }
 
     public boolean connect(String uriString) {
+    	if (client != null || socket != null) {
+	        return false;
+    	}
         client = new WebSocketClient();
-        socket = new CCWebSocket();
+        socket = new CCWebSocket(this);
         try {
             client.start();
             uri = new URI(uriString);
@@ -123,6 +137,25 @@ public class CCWebSocketConnector {
                 e.printStackTrace();
             }
         }
+        client = null;
+        socket = null;
         return closeStatus;
+    }
+    
+    /**
+     * Called when a response or notification is received from the server
+     * @param jsonResponse
+     */
+    public void receiveMessage(String jsonMessage) {
+    	JSONObject jobject = new JSONObject(jsonMessage);
+    	if (jobject.has("Tag")) {
+    		// is Response
+    	} else {
+    		// is Notification
+    		// object.receivePatch
+        	JSONObject data = (JSONObject) jobject.get("Data");
+        	if (data.has("Changes"))
+        		listener.recievePatch(data.getString("Changes"));
+    	}
     }
 }

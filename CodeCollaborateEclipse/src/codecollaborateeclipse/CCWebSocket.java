@@ -19,13 +19,14 @@ import java.util.concurrent.TimeUnit;
 @WebSocket(maxTextMessageSize = 64 * 1024)
 public class CCWebSocket {
     private final CountDownLatch closeLatch;
-    private EditorListener listener;
+    private CCWebSocketConnector connector;
 
     @SuppressWarnings("unused")
     private Session session;
 
-    public CCWebSocket() {
+    public CCWebSocket(CCWebSocketConnector connector) {
         this.closeLatch = new CountDownLatch(1);
+        this.connector = connector;
     }
 
     public boolean awaitClose(int duration, TimeUnit unit) throws InterruptedException {
@@ -43,14 +44,6 @@ public class CCWebSocket {
     public void onConnect(Session session) {
         System.out.printf("CC: Got connect: %s%n \n", session);
         this.session = session;
-//        try {
-//            Future<Void> fut;
-//            fut = session.getRemote().sendStringByFuture("{\"Resource\":\"User\", \"Action\":\"Login\", \"Email\":\"fahslaj@rose-hulman.edu\", \"Password\":\"abcd1234\"}");
-//            fut.get(2, TimeUnit.SECONDS);
-//            session.close(StatusCode.NORMAL, "I'm done");
-//        } catch (Throwable t) {
-//            t.printStackTrace();
-//        }
     }
 
     public boolean sendMessage(String msg) throws Exception {
@@ -74,14 +67,10 @@ public class CCWebSocket {
     }
 
     @OnWebSocketMessage
-    public void onMessage(String msg) {
+	public void onMessage(String msg) {
         System.out.println("Stuff has happened: "+msg);
-        this.listener.recievePatch(msg);
-    }
-    
-    public void setEditorListener(EditorListener l) {
-    	this.listener = l;
-    }
+        connector.receiveMessage(msg);
+	}
     
     public boolean sessionNull() {
         return session == null;
