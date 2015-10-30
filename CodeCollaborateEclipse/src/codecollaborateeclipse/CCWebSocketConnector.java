@@ -2,6 +2,7 @@ package codecollaborateeclipse;
 
 import org.eclipse.jetty.websocket.client.ClientUpgradeRequest;
 import org.eclipse.jetty.websocket.client.WebSocketClient;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.fasterxml.jackson.core.JsonParseException;
@@ -12,8 +13,10 @@ import codecollaborateeclipse.listener.EditorListener;
 import codecollaborateeclipse.models.FileChangeRequest;
 import codecollaborateeclipse.models.LoginRequest;
 import codecollaborateeclipse.models.Notification;
+import codecollaborateeclipse.models.PullFileRequest;
 import codecollaborateeclipse.models.Request;
 import codecollaborateeclipse.models.Response;
+import codecollaborateeclipse.models.Response.PatchData;
 import codecollaborateeclipse.models.SubscribeRequest;
 
 import java.io.IOException;
@@ -174,6 +177,25 @@ public class CCWebSocketConnector {
     	}
     }
     
+    public boolean pullDocument() {
+    	return pullDocument("5629a0c2111aeb63cf000002");
+    }
+    
+    public boolean pullDocument(String resId) {
+        PullFileRequest pfr = new PullFileRequest(getTag());
+        pfr.setResId(resId);
+        pfr.setUserId(userId);
+        pfr.setToken(token);
+        requestMap.put(pfr.getTag(), pfr);
+    	try {
+            socket.sendMessage(mapper.writeValueAsString(pfr));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+    
     private int getTag() {
     	return currentTag++;
     }
@@ -189,6 +211,15 @@ public class CCWebSocketConnector {
     		token = response.getData().getToken();
     		System.out.println("UserId: "+userId);
     		System.out.println("Token: "+token);
+    	} else if (request instanceof PullFileRequest && response.getData() != null) {
+    		System.out.println("Retrieving file data...");
+    		PatchData[] changes = response.getData().getChanges();
+    		System.out.println("Got changes from storage: "+changes);
+    		if (changes != null) {
+	    		for (int i = 0; i < changes.length; i++) {
+	    			listener.recievePatch(changes[i].getChanges());
+	    		}
+    		}
     	}
     	switch (response.getStatus()) {
     		case 1: return; 

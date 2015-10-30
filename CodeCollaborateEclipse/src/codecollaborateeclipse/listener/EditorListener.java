@@ -25,6 +25,7 @@ public class EditorListener {
 	IDocument doc;
 
 	IDocumentListener listener;
+	private boolean closed;
 	// Arghh, matey!
 
 	public EditorListener(CCWebSocketConnector connector) {
@@ -36,6 +37,7 @@ public class EditorListener {
 	}
 
 	public void listen() {
+		closed = false;
 		if (listener == null) {
 			listener = new IDocumentListener() {
 				String oldDoc = "";
@@ -93,7 +95,11 @@ public class EditorListener {
 	}
 	
 	public void sendPatch(String msg) {
-		connector.sendPatch(msg);
+		if (!closed)
+			connector.sendPatch(msg);
 	}
 
+	public void close() {
+		closed = true;
+	}
 }

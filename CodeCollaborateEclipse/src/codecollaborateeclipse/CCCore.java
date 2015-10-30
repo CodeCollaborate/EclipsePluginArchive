@@ -13,7 +13,6 @@ public class CCCore {
 	private static String email;
 	private static String password;
 	
-	
 	static {
 		connector = new CCWebSocketConnector();
 		listener = new EditorListener(connector);
@@ -38,10 +37,17 @@ public class CCCore {
         }
         connector.subscribe();
         listener.listen();
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        connector.pullDocument();
 	}
 	
 	public static void end() {
 		connector.close();
+		listener.close();
 	}
 	
 	public static void setEmail(String e) {

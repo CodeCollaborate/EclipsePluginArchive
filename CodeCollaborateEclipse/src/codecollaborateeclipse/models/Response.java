@@ -1,5 +1,7 @@
 package codecollaborateeclipse.models;
 
+import org.json.JSONArray;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -58,19 +60,22 @@ public class Response {
         private Byte[] bytes;
 
         @JsonProperty("Changes")
-        private String[] changes;
+        private PatchData[] changes;
 
-        @JsonProperty("FileId")
-        private String fileId;
+        @JsonProperty("File")
+        private String file;
 
         @JsonProperty("ProjectId")
         private String projectId;
 
-        @JsonProperty("UserId")
-        private String userId;
+        @JsonProperty("User")
+        private String user;
 
         @JsonProperty("Token")
         private String token;
+        
+        @JsonProperty("UserId")
+        private String userId;
 
         public Byte[] getBytes() {
             return bytes;
@@ -80,20 +85,28 @@ public class Response {
             this.bytes = bytes;
         }
 
-        public String[] getChanges() {
+        public PatchData[] getChanges() {
             return changes;
         }
 
-        public void setChanges(String[] changes) {
+        public void setChanges(PatchData[] changes) {
             this.changes = changes;
         }
 
-        public String getFileId() {
-            return fileId;
+        public String getFile() {
+            return file;
+        }
+        
+        public String getUserId() {
+        	return userId;
+        }
+        
+        public void setUserId(String userId) {
+        	this.userId = userId;
         }
 
-        public void setFileId(String fileId) {
-            this.fileId = fileId;
+        public void setFile(String file) {
+            this.file = file;
         }
 
         public String getProjectId() {
@@ -104,12 +117,12 @@ public class Response {
             this.projectId = projectId;
         }
 
-        public String getUserId() {
-            return userId;
+        public String getUser() {
+            return user;
         }
 
-        public void setUserId(String userId) {
-            this.userId = userId;
+        public void setUser(String user) {
+            this.user = user;
         }
 
         public String getToken() {
@@ -119,5 +132,74 @@ public class Response {
         public void setToken(String token) {
             this.token = token;
         }
+    }
+    
+    @JsonIgnoreProperties(ignoreUnknown=true)
+    public static class PatchData {
+    	@JsonProperty("Id")
+    	private String id;
+    	
+    	@JsonProperty("Changes")
+    	private String changes;
+    	
+    	@JsonProperty("Version")
+    	private long version;
+    	
+    	@JsonProperty("File")
+    	private String file;
+    	
+    	@JsonProperty("User")
+    	private String user;
+    	
+    	@JsonProperty("Date")
+    	private String date;
+
+		public String getId() {
+			return id;
+		}
+
+		public void setId(String id) {
+			this.id = id;
+		}
+
+		public String getChanges() {
+			return changes;
+		}
+
+		public void setChanges(String changes) {
+			this.changes = changes;
+		}
+
+		public long getVersion() {
+			return version;
+		}
+
+		public void setVersion(long version) {
+			this.version = version;
+		}
+
+		public String getFile() {
+			return file;
+		}
+
+		public void setFile(String file) {
+			this.file = file;
+		}
+
+		public String getUser() {
+			return user;
+		}
+
+		public void setUser(String user) {
+			this.user = user;
+		}
+
+		public String getDate() {
+			return date;
+		}
+
+		public void setDate(String date) {
+			this.date = date;
+		}
     }
 }
