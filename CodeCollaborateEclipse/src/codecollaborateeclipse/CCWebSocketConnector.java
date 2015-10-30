@@ -33,6 +33,8 @@ public class CCWebSocketConnector {
     private ObjectMapper mapper = new ObjectMapper();
     private EditorListener listener;
     private int currentTag = 0;
+    private String userId;
+    private String token;
 
     WebSocketClient client;
     CCWebSocket socket;
@@ -49,16 +51,14 @@ public class CCWebSocketConnector {
     public boolean sendPatch(String patch) {
     	String ResId = "5629a0c2111aeb63cf000002";
     	long FileVersion = System.currentTimeMillis();
-    	String Changes = patch.replaceAll("\n", "");
-    	String UserId = "56297d8e111aeb5f53000001";
-    	String Token = "token-fahslaj";
+    	String Changes = patch;//.replaceAll("\n", "");
     	
         FileChangeRequest fcr = new FileChangeRequest(getTag());
         fcr.setResId(ResId);
         fcr.setFileVersion(FileVersion);
         fcr.setChanges(Changes);
-        fcr.setUserId(UserId);
-        fcr.setToken(Token);
+        fcr.setUserId(userId);
+        fcr.setToken(token);
         requestMap.put(fcr.getTag(), fcr);
     	try {
             socket.sendMessage(mapper.writeValueAsString(fcr));
@@ -70,7 +70,7 @@ public class CCWebSocketConnector {
     }
 
     public boolean login() {
-        return login("fahslaj@rose-hulman.edu", "abcd1234");
+        return login(CCCore.getEmail(), CCCore.getPassword());
     }
 
     public boolean login(String email, String password) {
@@ -89,8 +89,6 @@ public class CCWebSocketConnector {
 
     public boolean subscribe() {
         String[] projects = {"5629a063111aeb63cf000001"};
-        String userId = "56297d8e111aeb5f53000001";
-        String token = "token-fahslaj";
         SubscribeRequest sr = new SubscribeRequest(getTag());
         sr.setUserId(userId);
         sr.setToken(token);
@@ -127,9 +125,12 @@ public class CCWebSocketConnector {
     }
 
     public boolean close() {
+    	if (client == null || socket == null) {
+    		return false;
+    	}
         boolean closeStatus = false;
         try {
-            closeStatus = socket.awaitClose(5, TimeUnit.SECONDS);
+            closeStatus = socket.awaitClose(2, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
             e.printStackTrace();
         } finally {
@@ -181,6 +182,13 @@ public class CCWebSocketConnector {
     	if (response == null) {
     		System.out.println("Failed to interpret response.");
     		return;
+    	}
+    	if (request instanceof LoginRequest && response.getData() != null) {
+    		System.out.println("Retrieving user details...");
+    		userId = response.getData().getUserId();
+    		token = response.getData().getToken();
+    		System.out.println("UserId: "+userId);
+    		System.out.println("Token: "+token);
     	}
     	switch (response.getStatus()) {
     		case 1: return; 

@@ -36,35 +36,55 @@ public class PatchHandler {
 	public String createPatchString(String text1, String text2) {
 		
 		Patch result = dmp.patch_make(text1, text2).getFirst();
-		
 		return result.toString();
 		
 	}
 	
-	public String recievePatch(String message, String text) {
+	public Object[] recievePatch(String message, String text) {
+		
+		Object[] results = new Object[4];
 		//parse JSON data
-		try{
-		ObjectMapper mapper = new ObjectMapper();
-		Notification notification = mapper.readValue(message, Notification.class);
-		
-		//deal with patch text
-		Patch p = dmp.patch_fromText(notification.getData().Changes).get(0);
-		LinkedList<Patch> patchList = new LinkedList<Patch>();
-		patchList.add(p);
-		Object[] patchResult = dmp.patch_apply(patchList, text);
-		
-		boolean[] patchesApplied = (boolean[]) patchResult[1];
-		
-		for(boolean patchAppliedResult : patchesApplied){
-			if(!patchAppliedResult){
-				System.out.println("Failed to apply a patch");
+		try {
+			System.out.println(message);
+			//deal with patch text
+			Patch p = dmp.patch_fromText(message).get(0);
+			String prefix;
+			String operation;
+			if (p.diffs.size() == 2) {
+				prefix = "";
+				operation = p.diffs.getFirst().text;
+			} else {
+				prefix = p.diffs.getFirst().text;
+				operation = p.diffs.get(1).text;
 			}
+			String suffix = p.diffs.getLast().text;
+			System.out.println("Change to be made: " + suffix);
+			int insertPos = dmp.match_main(text, prefix, p.start1);
+			int start = insertPos + prefix.length();
+			int end = insertPos + prefix.length() + suffix.length();
+			
+//			LinkedList<Patch> patchList = new LinkedList<Patch>();
+//			patchList.add(p);
+//			Object[] patchResult = dmp.patch_apply(patchList, text);
+//			
+//			boolean[] patchesApplied = (boolean[]) patchResult[1];
+//			
+//			for(boolean patchAppliedResult : patchesApplied) {
+//				if(!patchAppliedResult) {
+//					System.out.println("Failed to apply a patch");
+//				}
+//			}
+			results[0] = suffix;
+			results[1] = operation;
+			results[2] = start;
+			results[3] = end;
+			return results;
+			
+		} catch(Exception e) {
+			e.printStackTrace();
+			return results;
 		}
 		
-		return (String) patchResult[0];
-		}catch(Exception e){
-			return text;
-		}
 	}
 	
 }

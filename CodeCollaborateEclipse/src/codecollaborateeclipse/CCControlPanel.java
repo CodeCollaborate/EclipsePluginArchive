@@ -25,10 +25,9 @@ public class CCControlPanel extends ViewPart {
 	private DataBindingContext m_bindingContext;
 	private List userList;
 	private List projectList;
-	private CCCore core;
 
 	public CCControlPanel() {
-		this.core = new CCCore();
+		
 	}
 
 	@PreDestroy
@@ -93,7 +92,7 @@ public class CCControlPanel extends ViewPart {
 		btnConnect.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseDown(MouseEvent e) {
-				core.begin();
+				CCCore.begin();
 			}
 		});
 		btnConnect.setBounds(643, 5, 85, 29);
@@ -103,11 +102,15 @@ public class CCControlPanel extends ViewPart {
 		btnDisconnect.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseDown(MouseEvent e) {
-				core.end();
+				CCCore.end();
 			}
 		});
 		btnDisconnect.setBounds(734, 5, 85, 29);
 		btnDisconnect.setText("Disconnect");
+		
+		Label lblNewLabel = new Label(composite, SWT.NONE);
+		lblNewLabel.setBounds(79, 11, 85, 19);
+		lblNewLabel.setText("Disconnected");
 		m_bindingContext = initDataBindings();
 		
 	}

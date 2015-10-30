@@ -53,7 +53,7 @@ public class Response {
     }
 
     @JsonIgnoreProperties(ignoreUnknown=true)
-    static class ResponseData {
+	public static class ResponseData {
         @JsonProperty("FileBytes")
         private Byte[] bytes;
 

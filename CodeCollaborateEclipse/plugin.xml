@@ -51,5 +51,19 @@
          </action>
       </actionSet>
    </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="codecollaborateeclipse.preferences.CCPreferences"
+            id="codecollaborateeclipse.preferences.CCPreferences"
+            name="CodeCollaborate">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="codecollaborateeclipse.preferences.PreferenceInitializer">
+      </initializer>
+   </extension>
 
 </plugin>

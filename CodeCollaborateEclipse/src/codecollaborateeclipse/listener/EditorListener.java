@@ -6,6 +6,7 @@ import org.eclipse.ui.PlatformUI;
 
 import javax.print.Doc;
 
+import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
@@ -35,34 +36,38 @@ public class EditorListener {
 	}
 
 	public void listen() {
-
-		listener = new IDocumentListener() {
-			String oldDoc = "";
-
-			@Override
-			public void documentChanged(DocumentEvent event) {
-				// System.out.println("Change happened: " + event.toString());
-				String p = patchy.createPatchString(oldDoc, doc.get());
-				sendPatch(p);
-				// System.out.println(p);
-			}
-
-			@Override
-			public void documentAboutToBeChanged(DocumentEvent event) {
-				// System.out.println("I predict that the following change will
-				// occur: " + event.toString());
-				oldDoc = doc.get();
-			}
-		};
-
-		this.doc.addDocumentListener(listener);
-
+		if (listener == null) {
+			listener = new IDocumentListener() {
+				String oldDoc = "";
+	
+				@Override
+				public void documentChanged(DocumentEvent event) {
+					// System.out.println("Change happened: " + event.toString());
+					String p = patchy.createPatchString(oldDoc, doc.get());
+					sendPatch(p);
+					// System.out.println(p);
+				}
+	
+				@Override
+				public void documentAboutToBeChanged(DocumentEvent event) {
+					// System.out.println("I predict that the following change will
+					// occur: " + event.toString());
+					oldDoc = doc.get();
+				}
+			};
+			this.doc.addDocumentListener(listener);
+		}
 	}
 
 	public void recievePatch(String msg) {
 
-		String newDocText = this.patchy.recievePatch(msg, this.doc.get());
-		System.out.println("Replace \"" + doc.get() + "\" with \"" + newDocText + "\"");
+		Object[] textEdit = this.patchy.recievePatch(msg, this.doc.get());
+		String edit = (String) textEdit[0];
+		String operation = (String) textEdit[1];
+		int start = (int) textEdit[2];
+		int end = (int) textEdit[3];
+		int length = end - start;
+		//System.out.println("Replace \"" + doc.get() + "\" with \"" + newDocText + "\"");
 		
 		Display.getDefault().syncExec(new Runnable(){
 
@@ -70,7 +75,12 @@ public class EditorListener {
 			public void run() {
 				// TODO Auto-generated method stub
 				doc.removeDocumentListener(listener);
-				doc.set(newDocText);
+					try {
+						doc.replace(start, length, edit);
+					} catch (BadLocationException e) {
+						// TODO Auto-generated catch block
+						
+					}
 				doc.addDocumentListener(listener);
 				
 			}
