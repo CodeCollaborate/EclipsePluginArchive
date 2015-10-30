@@ -12,6 +12,7 @@ public class CCCore {
 		this.connector = new CCWebSocketConnector();
 		this.listener = new EditorListener(this.connector);
 		this.connector.setEditorListener(this.listener);
+		//ResourceManager.getFileMetadata();
 	}
 	
 	public void begin() {
@@ -27,16 +28,7 @@ public class CCCore {
 		
 	}
 	
-//	public void startEditorListener() {
-//		listene
-//		
-//		
-//	}
-//	
-//	public void startWebSocket() {
-//		
-//		
-//		
-//	}
-	
+	public void end() {
+		this.connector.close();
+	}
 }

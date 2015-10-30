@@ -68,7 +68,7 @@ public class CCWebSocket {
 
     @OnWebSocketMessage
 	public void onMessage(String msg) {
-        System.out.println("Stuff has happened: "+msg);
+        System.out.println("Got Stuff: "+msg);
         connector.receiveMessage(msg);
 	}
     

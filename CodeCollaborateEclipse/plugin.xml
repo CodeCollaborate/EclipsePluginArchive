@@ -11,8 +11,8 @@
             name="CodeCollaborate"
             icon="icons/sample.gif"
             category="CodeCollaborate"
-            class="codecollaborateeclipse.CCView"
-            id="CodeCollaborateEclipse.CCView">
+            class="codecollaborateeclipse.CCControlPanel"
+            id="CodeCollaborateEclipse.CCControlPanel">
       </view>
    </extension>
    <extension
@@ -23,7 +23,7 @@
                ratio="0.5"
                relative="org.eclipse.ui.views.ProblemView"
                relationship="right"
-               id="CodeCollaborateEclipse.CCView">
+               id="CodeCollaborateEclipse.CCControlPanel">
          </view>
       </perspectiveExtension>
    </extension>
