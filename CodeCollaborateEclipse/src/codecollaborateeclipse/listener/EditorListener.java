@@ -76,7 +76,10 @@ public class EditorListener {
 				// TODO Auto-generated method stub
 				doc.removeDocumentListener(listener);
 					try {
-						doc.replace(start, length, edit);
+						if (operation.equals("DELETE"))
+							doc.replace(start, 1, "");
+						else
+							doc.replace(start, 0, edit);
 					} catch (BadLocationException e) {
 						// TODO Auto-generated catch block
 						

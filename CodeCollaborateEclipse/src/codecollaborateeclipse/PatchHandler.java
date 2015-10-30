@@ -50,15 +50,17 @@ public class PatchHandler {
 			Patch p = dmp.patch_fromText(message).get(0);
 			String prefix;
 			String operation;
-			if (p.diffs.size() == 2) {
+			if (p.diffs.size() == 1) {
 				prefix = "";
-				operation = p.diffs.getFirst().text;
+				operation = p.diffs.getFirst().operation.toString();
 			} else {
 				prefix = p.diffs.getFirst().text;
-				operation = p.diffs.get(1).text;
+				operation = p.diffs.getLast().operation.toString();
 			}
 			String suffix = p.diffs.getLast().text;
 			System.out.println("Change to be made: " + suffix);
+			System.out.println("Operation: " + operation);
+			System.out.println("Context: " + prefix);
 			int insertPos = dmp.match_main(text, prefix, p.start1);
 			int start = insertPos + prefix.length();
 			int end = insertPos + prefix.length() + suffix.length();
