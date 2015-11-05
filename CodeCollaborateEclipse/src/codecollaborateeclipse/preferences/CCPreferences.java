@@ -35,8 +35,8 @@ public class CCPreferences
 
 			@Override
 			public void propertyChange(PropertyChangeEvent arg0) {
-				if (arg0.getProperty().equals(PreferenceConstants.P_EMAIL)) {
-					CCCore.setEmail(arg0.getNewValue().toString());
+				if (arg0.getProperty().equals(PreferenceConstants.P_USERNAME)) {
+					CCCore.setUsername(arg0.getNewValue().toString());
 				} else if (arg0.getProperty().equals(PreferenceConstants.P_PASSWORD)) {
 					CCCore.setPassword(arg0.getNewValue().toString());
 				}
@@ -51,7 +51,7 @@ public class CCPreferences
 	 * restore itself.
 	 */
 	public void createFieldEditors() {
-		addField(new StringFieldEditor(PreferenceConstants.P_EMAIL, "Email:", getFieldEditorParent()));
+		addField(new StringFieldEditor(PreferenceConstants.P_USERNAME, "Username:", getFieldEditorParent()));
 		StringFieldEditor pword = new StringFieldEditor(PreferenceConstants.P_PASSWORD, "Password:", getFieldEditorParent()) {
 			@Override
 			    protected void doFillIntoGrid(Composite parent, int numColumns) {

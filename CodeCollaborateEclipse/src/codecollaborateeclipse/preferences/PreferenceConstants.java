@@ -5,7 +5,7 @@ package codecollaborateeclipse.preferences;
  */
 public class PreferenceConstants {
 
-	public static final String P_EMAIL = "Email";
+	public static final String P_USERNAME = "Username";
 
 	public static final String P_PASSWORD = "Password";
 	

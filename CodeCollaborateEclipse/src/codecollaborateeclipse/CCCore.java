@@ -10,7 +10,7 @@ public class CCCore {
 	
 	private static EditorListener listener;
 	private static CCWebSocketConnector connector;
-	private static String email;
+	private static String username;
 	private static String password;
 	
 	static {
@@ -21,7 +21,7 @@ public class CCCore {
 	}
 	
 	public static void begin() {
-		email = Activator.getDefault().getPreferenceStore().getString(PreferenceConstants.P_EMAIL);
+		username = Activator.getDefault().getPreferenceStore().getString(PreferenceConstants.P_USERNAME);
 		password = Activator.getDefault().getPreferenceStore().getString(PreferenceConstants.P_PASSWORD);
 		connector.connect();
         try {
@@ -50,16 +50,16 @@ public class CCCore {
 		listener.close();
 	}
 	
-	public static void setEmail(String e) {
-		email = e;
+	public static void setUsername(String e) {
+		username = e;
 	}
 	
 	public static void setPassword(String p) {
 		password = p;
 	}
 
-	public static String getEmail() {
-		return email;
+	public static String getUsername() {
+		return username;
 	}
 	
 	public static String getPassword() {

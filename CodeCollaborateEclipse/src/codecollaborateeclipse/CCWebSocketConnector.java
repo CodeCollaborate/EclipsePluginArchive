@@ -36,7 +36,7 @@ public class CCWebSocketConnector {
     private ObjectMapper mapper = new ObjectMapper();
     private EditorListener listener;
     private int currentTag = 0;
-    private String userId;
+    private String username;
     private String token;
 
     WebSocketClient client;
@@ -60,7 +60,7 @@ public class CCWebSocketConnector {
         fcr.setResId(ResId);
         fcr.setFileVersion(FileVersion);
         fcr.setChanges(Changes);
-        fcr.setUserId(userId);
+        fcr.setUsername(username);
         fcr.setToken(token);
         requestMap.put(fcr.getTag(), fcr);
     	try {
@@ -73,12 +73,12 @@ public class CCWebSocketConnector {
     }
 
     public boolean login() {
-        return login(CCCore.getEmail(), CCCore.getPassword());
+        return login(username = CCCore.getUsername(), CCCore.getPassword());
     }
 
-    public boolean login(String email, String password) {
+    public boolean login(String username, String password) {
         LoginRequest lr = new LoginRequest(getTag());
-        lr.setEmail(email);
+        lr.setUsername(username);
         lr.setPassword(password);
         requestMap.put(lr.getTag(),  lr);
     	try {
@@ -93,7 +93,7 @@ public class CCWebSocketConnector {
     public boolean subscribe() {
         String[] projects = {"5629a063111aeb63cf000001"};
         SubscribeRequest sr = new SubscribeRequest(getTag());
-        sr.setUserId(userId);
+        sr.setUsername(username);
         sr.setToken(token);
         sr.setProjects(projects);
         requestMap.put(sr.getTag(), sr);
@@ -184,7 +184,7 @@ public class CCWebSocketConnector {
     public boolean pullDocument(String resId) {
         PullFileRequest pfr = new PullFileRequest(getTag());
         pfr.setResId(resId);
-        pfr.setUserId(userId);
+        pfr.setUsername(username);
         pfr.setToken(token);
         requestMap.put(pfr.getTag(), pfr);
     	try {
@@ -207,9 +207,7 @@ public class CCWebSocketConnector {
     	}
     	if (request instanceof LoginRequest && response.getData() != null) {
     		System.out.println("Retrieving user details...");
-    		userId = response.getData().getUserId();
     		token = response.getData().getToken();
-    		System.out.println("UserId: "+userId);
     		System.out.println("Token: "+token);
     	} else if (request instanceof PullFileRequest && response.getData() != null) {
     		System.out.println("Retrieving file data...");

@@ -68,14 +68,8 @@ public class Response {
         @JsonProperty("ProjectId")
         private String projectId;
 
-        @JsonProperty("User")
-        private String user;
-
         @JsonProperty("Token")
         private String token;
-        
-        @JsonProperty("UserId")
-        private String userId;
 
         public Byte[] getBytes() {
             return bytes;
@@ -96,14 +90,6 @@ public class Response {
         public String getFile() {
             return file;
         }
-        
-        public String getUserId() {
-        	return userId;
-        }
-        
-        public void setUserId(String userId) {
-        	this.userId = userId;
-        }
 
         public void setFile(String file) {
             this.file = file;
@@ -115,14 +101,6 @@ public class Response {
 
         public void setProjectId(String projectId) {
             this.projectId = projectId;
-        }
-
-        public String getUser() {
-            return user;
-        }
-
-        public void setUser(String user) {
-            this.user = user;
         }
 
         public String getToken() {
@@ -145,11 +123,11 @@ public class Response {
     	@JsonProperty("Version")
     	private long version;
     	
-    	@JsonProperty("File")
-    	private String file;
+    	@JsonProperty("FileId")
+    	private String fileId;
     	
-    	@JsonProperty("User")
-    	private String user;
+    	@JsonProperty("Username")
+    	private String username;
     	
     	@JsonProperty("Date")
     	private String date;
@@ -178,20 +156,20 @@ public class Response {
 			this.version = version;
 		}
 
-		public String getFile() {
-			return file;
+		public String getFileId() {
+			return fileId;
 		}
 
-		public void setFile(String file) {
-			this.file = file;
+		public void setFileId(String file) {
+			this.fileId = file;
 		}
 
-		public String getUser() {
-			return user;
+		public String getUsername() {
+			return username;
 		}
 
-		public void setUser(String user) {
-			this.user = user;
+		public void setUsername(String user) {
+			this.username = user;
 		}
 
 		public String getDate() {
