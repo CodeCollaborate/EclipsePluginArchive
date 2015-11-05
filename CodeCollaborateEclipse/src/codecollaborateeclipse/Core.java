@@ -3,19 +3,20 @@ package codecollaborateeclipse;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
-import codecollaborateeclipse.listener.EditorListener;
+import codecollaborateeclipse.connections.CCWebSocketConnector;
+import codecollaborateeclipse.document.DocumentManager;
 import codecollaborateeclipse.preferences.PreferenceConstants;
 
-public class CCCore {
+public class Core {
 	
-	private static EditorListener listener;
+	private static DocumentManager listener;
 	private static CCWebSocketConnector connector;
 	private static String username;
 	private static String password;
 	
 	static {
 		connector = new CCWebSocketConnector();
-		listener = new EditorListener(connector);
+		listener = new DocumentManager(connector);
 		connector.setEditorListener(listener);
 		//ResourceManager.getFileMetadata();
 	}

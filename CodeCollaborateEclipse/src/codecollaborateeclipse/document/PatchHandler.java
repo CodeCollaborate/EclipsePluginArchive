@@ -1,4 +1,4 @@
-package codecollaborateeclipse;
+package codecollaborateeclipse.document;
 
 import java.io.IOException;
 import java.util.LinkedList;

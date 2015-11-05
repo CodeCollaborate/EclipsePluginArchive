@@ -1,4 +1,4 @@
-package codecollaborateeclipse;
+package codecollaborateeclipse.connections;
 
 import org.eclipse.jetty.websocket.client.ClientUpgradeRequest;
 import org.eclipse.jetty.websocket.client.WebSocketClient;
@@ -9,7 +9,8 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import codecollaborateeclipse.listener.EditorListener;
+import codecollaborateeclipse.Core;
+import codecollaborateeclipse.document.DocumentManager;
 import codecollaborateeclipse.models.FileChangeRequest;
 import codecollaborateeclipse.models.LoginRequest;
 import codecollaborateeclipse.models.Notification;
@@ -34,7 +35,7 @@ public class CCWebSocketConnector {
     private Queue requestQueue;
     private HashMap<Integer, Request> requestMap = new HashMap();
     private ObjectMapper mapper = new ObjectMapper();
-    private EditorListener listener;
+    private DocumentManager listener;
     private int currentTag = 0;
     private String username;
     private String token;
@@ -43,7 +44,7 @@ public class CCWebSocketConnector {
     CCWebSocket socket;
     URI uri;
     
-    public void setEditorListener(EditorListener listener) {
+    public void setEditorListener(DocumentManager listener) {
     	this.listener = listener;
     }
     
@@ -73,7 +74,7 @@ public class CCWebSocketConnector {
     }
 
     public boolean login() {
-        return login(username = CCCore.getUsername(), CCCore.getPassword());
+        return login(username = Core.getUsername(), Core.getPassword());
     }
 
     public boolean login(String username, String password) {

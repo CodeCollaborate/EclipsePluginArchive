@@ -1,4 +1,4 @@
-package codecollaborateeclipse;
+package codecollaborateeclipse.resources;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;

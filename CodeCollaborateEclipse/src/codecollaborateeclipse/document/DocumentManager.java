@@ -1,4 +1,4 @@
-package codecollaborateeclipse.listener;
+package codecollaborateeclipse.document;
 
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorInput;
@@ -13,10 +13,9 @@ import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.texteditor.ITextEditor;
 
-import codecollaborateeclipse.CCWebSocketConnector;
-import codecollaborateeclipse.PatchHandler;
+import codecollaborateeclipse.connections.CCWebSocketConnector;
 
-public class EditorListener {
+public class DocumentManager {
 
 	CCWebSocketConnector connector;
 	PatchHandler patchy;
@@ -28,7 +27,7 @@ public class EditorListener {
 	private boolean closed;
 	// Arghh, matey!
 
-	public EditorListener(CCWebSocketConnector connector) {
+	public DocumentManager(CCWebSocketConnector connector) {
 		this.connector = connector;
 		this.patchy = new PatchHandler();
 		editor = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor();

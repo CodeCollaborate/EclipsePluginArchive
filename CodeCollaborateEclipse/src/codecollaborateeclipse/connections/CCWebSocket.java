@@ -1,4 +1,4 @@
-package codecollaborateeclipse;
+package codecollaborateeclipse.connections;
 
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.StatusCode;
@@ -7,7 +7,7 @@ import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 
-import codecollaborateeclipse.listener.EditorListener;
+import codecollaborateeclipse.document.DocumentManager;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Future;

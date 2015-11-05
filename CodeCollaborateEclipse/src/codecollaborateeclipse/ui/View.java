@@ -1,4 +1,4 @@
-package codecollaborateeclipse;
+package codecollaborateeclipse.ui;
 
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
@@ -8,14 +8,15 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.ui.part.ViewPart;
 
-import codecollaborateeclipse.listener.EditorListener;
+import codecollaborateeclipse.Core;
+import codecollaborateeclipse.document.DocumentManager;
 
-public class CCView extends ViewPart {
+public class View extends ViewPart {
 	
 	Label label;
 	Button start;
 	
-    public CCView() {
+    public View() {
     	
     }
     
@@ -24,7 +25,7 @@ public class CCView extends ViewPart {
        label.setText("CodeCollaborate");
        start = new Button(parent, SWT.PUSH);
        start.setText("Start");
-       CCCore core = new CCCore();
+       Core core = new Core();
        start.addSelectionListener(new SelectionListener() {
 
     	   @Override

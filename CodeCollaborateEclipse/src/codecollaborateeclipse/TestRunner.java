@@ -3,8 +3,8 @@ package codecollaborateeclipse;
 import org.eclipse.jetty.websocket.client.ClientUpgradeRequest;
 import org.eclipse.jetty.websocket.client.WebSocketClient;
 
-import codecollaborateeclipse.CCWebSocket;
-import codecollaborateeclipse.CCWebSocketConnector;
+import codecollaborateeclipse.connections.CCWebSocket;
+import codecollaborateeclipse.connections.CCWebSocketConnector;
 
 import java.net.URI;
 import java.util.concurrent.TimeUnit;
