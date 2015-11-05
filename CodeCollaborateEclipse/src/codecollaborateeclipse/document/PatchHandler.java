@@ -9,7 +9,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import codecollaborateeclipse.models.Notification;
 import google.diffmatchpatch.*;
-import google.diffmatchpatch.diff_match_patch.Patch;
+import google.diffmatchpatch.DiffMatchPatch.Patch;
+import google.diffmatchpatch.DiffMatchPatch.PatchRange;
 
 /**
  * PatchHandler
@@ -19,7 +20,7 @@ import google.diffmatchpatch.diff_match_patch.Patch;
  */
 public class PatchHandler {
 	
-	private diff_match_patch dmp = new diff_match_patch();
+	private DiffMatchPatch dmp = new DiffMatchPatch();
 	
 	public PatchHandler() {
 		
@@ -48,6 +49,11 @@ public class PatchHandler {
 			System.out.println(message);
 			//deal with patch text
 			Patch p = dmp.patch_fromText(message).get(0);
+			LinkedList<Patch> patches = new LinkedList<Patch>();
+			Object[] appliedPatchResults = dmp.patch_apply(patches, text);
+			//TODO: check boolean array for fuck-ups
+			
+			PatchRange[] ranges = (PatchRange[]) appliedPatchResults[2];
 			String prefix;
 			String operation;
 			String suffix;
@@ -71,9 +77,9 @@ public class PatchHandler {
 			System.out.println("Change to be made: " + suffix);
 			System.out.println("Operation: " + operation);
 			System.out.println("Context: " + prefix);
-			int insertPos = dmp.match_main(text, prefix, p.start1);
-			int start = insertPos + prefix.length();
-			int end = insertPos + prefix.length() + suffix.length();
+//			int insertPos = dmp.match_main(text, prefix, p.start1);
+			int start = ranges[0].getStartPos();
+			int end = ranges[0].getEndPos();
 			
 //			LinkedList<Patch> patchList = new LinkedList<Patch>();
 //			patchList.add(p);

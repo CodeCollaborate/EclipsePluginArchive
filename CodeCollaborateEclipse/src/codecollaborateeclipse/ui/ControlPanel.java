@@ -95,7 +95,7 @@ public class ControlPanel extends ViewPart {
 		btnConnect.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseDown(MouseEvent e) {
-				Core.begin();
+				Core.getInstance().begin();
 			}
 		});
 		btnConnect.setBounds(643, 5, 85, 29);
@@ -105,7 +105,7 @@ public class ControlPanel extends ViewPart {
 		btnDisconnect.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseDown(MouseEvent e) {
-				Core.end();
+				Core.getInstance().end();
 			}
 		});
 		btnDisconnect.setBounds(734, 5, 85, 29);

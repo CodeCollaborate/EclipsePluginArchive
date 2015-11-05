@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import codecollaborateeclipse.Core;
+import codecollaborateeclipse.Storage;
 import codecollaborateeclipse.document.DocumentManager;
 import codecollaborateeclipse.models.FileChangeRequest;
 import codecollaborateeclipse.models.LoginRequest;
@@ -37,8 +38,6 @@ public class CCWebSocketConnector {
     private ObjectMapper mapper = new ObjectMapper();
     private DocumentManager listener;
     private int currentTag = 0;
-    private String username;
-    private String token;
 
     WebSocketClient client;
     CCWebSocket socket;
@@ -61,8 +60,8 @@ public class CCWebSocketConnector {
         fcr.setResId(ResId);
         fcr.setFileVersion(FileVersion);
         fcr.setChanges(Changes);
-        fcr.setUsername(username);
-        fcr.setToken(token);
+        fcr.setUsername(Storage.getUsername());
+        fcr.setToken(Storage.getToken());
         requestMap.put(fcr.getTag(), fcr);
     	try {
             socket.sendMessage(mapper.writeValueAsString(fcr));
@@ -74,13 +73,9 @@ public class CCWebSocketConnector {
     }
 
     public boolean login() {
-        return login(username = Core.getUsername(), Core.getPassword());
-    }
-
-    public boolean login(String username, String password) {
         LoginRequest lr = new LoginRequest(getTag());
-        lr.setUsername(username);
-        lr.setPassword(password);
+        lr.setUsername(Storage.getUsername());
+        lr.setPassword(Storage.getPassword());
         requestMap.put(lr.getTag(),  lr);
     	try {
             socket.sendMessage(mapper.writeValueAsString(lr));
@@ -94,8 +89,8 @@ public class CCWebSocketConnector {
     public boolean subscribe() {
         String[] projects = {"5629a063111aeb63cf000001"};
         SubscribeRequest sr = new SubscribeRequest(getTag());
-        sr.setUsername(username);
-        sr.setToken(token);
+        sr.setUsername(Storage.getUsername());
+        sr.setToken(Storage.getToken());
         sr.setProjects(projects);
         requestMap.put(sr.getTag(), sr);
         try {
@@ -185,8 +180,8 @@ public class CCWebSocketConnector {
     public boolean pullDocument(String resId) {
         PullFileRequest pfr = new PullFileRequest(getTag());
         pfr.setResId(resId);
-        pfr.setUsername(username);
-        pfr.setToken(token);
+        pfr.setUsername(Storage.getUsername());
+        pfr.setToken(Storage.getToken());
         requestMap.put(pfr.getTag(), pfr);
     	try {
             socket.sendMessage(mapper.writeValueAsString(pfr));
@@ -208,8 +203,8 @@ public class CCWebSocketConnector {
     	}
     	if (request instanceof LoginRequest && response.getData() != null) {
     		System.out.println("Retrieving user details...");
-    		token = response.getData().getToken();
-    		System.out.println("Token: "+token);
+    		Storage.setToken(response.getData().getToken());
+    		System.out.println("Token: "+Storage.getToken());
     	} else if (request instanceof PullFileRequest && response.getData() != null) {
     		System.out.println("Retrieving file data...");
     		PatchData[] changes = response.getData().getChanges();

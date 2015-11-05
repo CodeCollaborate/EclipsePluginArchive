@@ -1,6 +1,5 @@
 package codecollaborateeclipse;
 
-import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
 import codecollaborateeclipse.connections.CCWebSocketConnector;
@@ -9,21 +8,20 @@ import codecollaborateeclipse.preferences.PreferenceConstants;
 
 public class Core {
 	
-	private static DocumentManager listener;
-	private static CCWebSocketConnector connector;
-	private static String username;
-	private static String password;
+	private DocumentManager listener;
+	private CCWebSocketConnector connector;
+	private static Core core = new Core();
 	
-	static {
+	public Core() {
 		connector = new CCWebSocketConnector();
 		listener = new DocumentManager(connector);
 		connector.setEditorListener(listener);
 		//ResourceManager.getFileMetadata();
 	}
 	
-	public static void begin() {
-		username = Activator.getDefault().getPreferenceStore().getString(PreferenceConstants.P_USERNAME);
-		password = Activator.getDefault().getPreferenceStore().getString(PreferenceConstants.P_PASSWORD);
+	public void begin() {
+		Storage.setUsername(Activator.getDefault().getPreferenceStore().getString(PreferenceConstants.P_USERNAME));
+		Storage.setPassword(Activator.getDefault().getPreferenceStore().getString(PreferenceConstants.P_PASSWORD));
 		connector.connect();
         try {
             Thread.sleep(1000);
@@ -46,24 +44,12 @@ public class Core {
         connector.pullDocument();
 	}
 	
-	public static void end() {
+	public void end() {
 		connector.close();
 		listener.close();
 	}
 	
-	public static void setUsername(String e) {
-		username = e;
-	}
-	
-	public static void setPassword(String p) {
-		password = p;
-	}
-
-	public static String getUsername() {
-		return username;
-	}
-	
-	public static String getPassword() {
-		return password;
+	public static Core getInstance() {
+		return core;
 	}
 }

@@ -8,6 +8,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.IWorkbench;
 import codecollaborateeclipse.Activator;
 import codecollaborateeclipse.Core;
+import codecollaborateeclipse.Storage;
 
 /**
  * This class represents a preference page that
@@ -36,9 +37,9 @@ public class Preferences
 			@Override
 			public void propertyChange(PropertyChangeEvent arg0) {
 				if (arg0.getProperty().equals(PreferenceConstants.P_USERNAME)) {
-					Core.setUsername(arg0.getNewValue().toString());
+					Storage.setUsername(arg0.getNewValue().toString());
 				} else if (arg0.getProperty().equals(PreferenceConstants.P_PASSWORD)) {
-					Core.setPassword(arg0.getNewValue().toString());
+					Storage.setPassword(arg0.getNewValue().toString());
 				}
 			}
 		});
