@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Created by fahslaj on 10/22/2015.
  */
 @JsonIgnoreProperties(ignoreUnknown=true)
-public class Response {
+public class Response extends ServerMessage {
     @JsonProperty("Status")
     private int status;
 

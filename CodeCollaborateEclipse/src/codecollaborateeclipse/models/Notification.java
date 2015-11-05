@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Created by fahslaj on 10/22/2015.
  */
 @JsonIgnoreProperties(ignoreUnknown=true)
-public class Notification {
+public class Notification extends ServerMessage {
     @JsonProperty("Action")
     private String action;
 
@@ -56,6 +56,8 @@ public class Notification {
     public static class NotificationData{
         public String Changes;
         public Long FileVersion;
+        public String Username;
+        
 		public String getChanges() {
 			return Changes;
 		}
@@ -67,6 +69,12 @@ public class Notification {
 		}
 		public void setFileVersion(Long fileVersion) {
 			FileVersion = fileVersion;
+		}
+		public String getUsername() {
+			return Username;
+		}
+		public void setUsername(String username) {
+			Username = username;
 		}
     }
 }

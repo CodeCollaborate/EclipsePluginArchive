@@ -4,6 +4,8 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.PlatformUI;
 
+import java.util.ArrayList;
+
 import javax.print.Doc;
 
 import org.eclipse.jface.text.BadLocationException;
@@ -14,21 +16,21 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 import codecollaborateeclipse.connections.CCWebSocketConnector;
+import codecollaborateeclipse.events.DocumentChangedListener;
 
 public class DocumentManager {
 
-	CCWebSocketConnector connector;
-	PatchHandler patchy;
-	IEditorPart editor;
-	IEditorInput input;
-	IDocument doc;
+	private ArrayList<DocumentChangedListener> listeners = new ArrayList<DocumentChangedListener>();
+	private PatchHandler patchy;
+	private IEditorPart editor;
+	private IEditorInput input;
+	private IDocument doc;
 
-	IDocumentListener listener;
+	private IDocumentListener docListener;
 	private boolean closed;
 	// Arghh, matey!
 
-	public DocumentManager(CCWebSocketConnector connector) {
-		this.connector = connector;
+	public DocumentManager() {
 		this.patchy = new PatchHandler();
 		editor = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
 		input = editor.getEditorInput();
@@ -37,15 +39,15 @@ public class DocumentManager {
 
 	public void listen() {
 		closed = false;
-		if (listener == null) {
-			listener = new IDocumentListener() {
+		if (docListener == null) {
+			docListener = new IDocumentListener() {
 				String oldDoc = "";
 	
 				@Override
 				public void documentChanged(DocumentEvent event) {
 					// System.out.println("Change happened: " + event.toString());
 					String p = patchy.createPatchString(oldDoc, doc.get());
-					sendPatch(p);
+					DocumentManager.this.notify(p);
 					// System.out.println(p);
 				}
 	
@@ -56,7 +58,7 @@ public class DocumentManager {
 					oldDoc = doc.get();
 				}
 			};
-			this.doc.addDocumentListener(listener);
+			this.doc.addDocumentListener(docListener);
 		}
 	}
 
@@ -75,7 +77,7 @@ public class DocumentManager {
 			@Override
 			public void run() {
 				// TODO Auto-generated method stub
-				doc.removeDocumentListener(listener);
+				doc.removeDocumentListener(docListener);
 					try {
 						if (operation.equals("DELETE"))
 							doc.replace(start, 1, "");
@@ -85,20 +87,27 @@ public class DocumentManager {
 						// TODO Auto-generated catch block
 						
 					}
-				doc.addDocumentListener(listener);
+				doc.addDocumentListener(docListener);
 				
 			}
 			
 		});
 
 	}
-	
-	public void sendPatch(String msg) {
-		if (!closed)
-			connector.sendPatch(msg);
-	}
 
 	public void close() {
 		closed = true;
+	}
+	
+	public void addDocumentChangedListener(DocumentChangedListener listener) {
+		listeners.add(listener);
+	}
+	
+	public void notify(String patch) {
+		if (patch == null)
+			throw new NullPointerException("Patch cannot be null");
+		for (DocumentChangedListener listeny : listeners) {
+			listeny.onDocumentModified(patch);
+		}
 	}
 }

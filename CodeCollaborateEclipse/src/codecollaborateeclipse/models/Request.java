@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonIgnoreProperties(ignoreUnknown=true)
 public class Request {
 	@JsonProperty("Tag")
-	protected int tag;
+	protected long tag;
 	
 	@JsonProperty("Action")
 	protected String action;
@@ -40,11 +40,11 @@ public class Request {
 		this.tag = tag;
 	}
 
-	public int getTag() {
+	public long getTag() {
 		return tag;
 	}
 
-	public void setTag(int tag) {
+	public void setTag(long tag) {
 		this.tag = tag;
 	}
 
