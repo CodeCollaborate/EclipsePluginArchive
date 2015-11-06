@@ -70,7 +70,7 @@ public class Response extends ServerMessage {
         private PatchData[] changes;
 
         @JsonProperty("File")
-        private String file;
+        private File file;
         
         @JsonProperty("Files")
         private File[] files;
@@ -116,11 +116,11 @@ public class Response extends ServerMessage {
             this.changes = changes;
         }
 
-        public String getFile() {
+        public File getFile() {
             return file;
         }
 
-        public void setFile(String file) {
+        public void setFile(File file) {
             this.file = file;
         }
 

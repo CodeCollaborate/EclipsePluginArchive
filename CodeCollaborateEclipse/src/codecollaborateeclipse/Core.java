@@ -19,6 +19,7 @@ import codecollaborateeclipse.models.Response;
 import codecollaborateeclipse.models.Response.File;
 import codecollaborateeclipse.models.Response.Project;
 import codecollaborateeclipse.models.ServerMessage;
+import codecollaborateeclipse.models.SubscribeRequest;
 import codecollaborateeclipse.preferences.PreferenceConstants;
 import codecollaborateeclipse.resources.ResourceManager;
 import codecollaborateeclipse.ui.UIManager;
@@ -107,6 +108,8 @@ public class Core implements ResponseNotificationListener, DocumentChangedListen
     		populateProjectData(response.getData().getProjects());
     	} else if (request instanceof FetchFilesRequest && response.getData() != null) {
     		populateFileData(request.getResId(), response.getData().getFiles());
+    	} else if (request instanceof SubscribeRequest && response.getStatus() == 1) {
+    		Storage.getInstance().getUsers().add(Storage.getInstance().getUsername()+" (me)");
     	}
     	switch (response.getStatus()) {
     		case 1: return; 
@@ -156,7 +159,7 @@ public class Core implements ResponseNotificationListener, DocumentChangedListen
     			break;
     		case "Project": 
     			if (action.equals("Subscribe")) {
-    				//update UI for current connected users
+    				Storage.getInstance().getUsers().add(n.getData().getUsername());
     			}
     			break;
     		default: break;

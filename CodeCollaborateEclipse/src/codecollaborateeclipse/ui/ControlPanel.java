@@ -27,6 +27,7 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.CoolBar;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.ui.dialogs.ProjectLocationMoveDialog;
 import org.eclipse.ui.internal.dnd.SwtUtil;
 import org.eclipse.ui.part.ViewPart;
 
@@ -55,8 +56,8 @@ import org.eclipse.jface.viewers.Viewer;
 public class ControlPanel extends ViewPart {
 	private DataBindingContext m_bindingContext;
 	private Label lblInsert;
-	private List usersList;
-	private List projectsList;
+	private ListViewer usersListViewer;
+	private ListViewer projectsListViewer;
 
 	public ControlPanel() {
 		
@@ -129,18 +130,20 @@ public class ControlPanel extends ViewPart {
 		btnTest.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseDown(MouseEvent e) {
-				Storage.getInstance().getUsers().add("New User!");
-				usersList.redraw();
+				usersListViewer.refresh();
+				projectsListViewer.refresh();
 			}
 		});
 		btnTest.setBounds(92, 10, 85, 29);
-		btnTest.setText("Test");
+		btnTest.setText("Refresh");
 		
-		projectsList = new List(composite, SWT.BORDER);
-		projectsList.setBounds(10, 45, 458, 222);
+		projectsListViewer = new ListViewer(composite, SWT.BORDER | SWT.V_SCROLL);
+		List projectsListView = projectsListViewer.getList();
+		projectsListView.setBounds(10, 45, 472, 222);
 		
-		usersList = new List(composite, SWT.BORDER);
-		usersList.setBounds(488, 45, 476, 222);
+		usersListViewer = new ListViewer(composite, SWT.BORDER | SWT.V_SCROLL);
+		List usersListView = usersListViewer.getList();
+		usersListView.setBounds(488, 45, 476, 222);
 		m_bindingContext = initDataBindings();
 		
 	}
@@ -151,16 +154,72 @@ public class ControlPanel extends ViewPart {
 		IObservableValue observeConnectionStatus = BeanProperties.value(Storage.class, "connectionStatus").observe(Storage.getInstance());
 		bindingContext.bindValue(observeTextLblInsertObserveWidget, observeConnectionStatus, null, null);
 		//
-		//
-		IObservableList itemsProjectsListObserveWidget = WidgetProperties.items().observe(projectsList);
-		IObservableList storageProjects = BeanProperties.list(Storage.class, "projectNames").observe(Storage.getInstance());
-		bindingContext.bindList(itemsProjectsListObserveWidget, storageProjects , null, null);
-		//
-		//
-		IObservableList itemsUsersListObserveWidget = WidgetProperties.items().observe(usersList);
-		IObservableList storageUsers = BeanProperties.list(Storage.class, "users").observe(Storage.getInstance());
-		bindingContext.bindList(itemsUsersListObserveWidget, storageUsers , null, null);
-		//
+		usersListViewer.setContentProvider(new IStructuredContentProvider() {
+			
+			@Override
+			public void inputChanged(Viewer arg0, Object arg1, Object arg2) {
+				System.out.println("Input changed: old="+arg1+", new="+arg2);
+			}
+			
+			@Override
+			public void dispose() {
+				System.out.println("Disposing...");
+			}
+			
+			@Override
+			public Object[] getElements(Object arg0) {
+				ArrayList<String> names = (ArrayList<String>)arg0;
+				return names.toArray();
+			}
+		});
+		usersListViewer.setInput(Storage.getInstance().getUsers());
+		usersListViewer.setLabelProvider(new LabelProvider() {
+			public Image getImage(Object element) {
+				return null;
+			}
+			public String getText(Object element) {
+				return ((String)element);
+			}
+		});
+		usersListViewer.refresh();
+		projectsListViewer.setContentProvider(new IStructuredContentProvider() {
+			
+			@Override
+			public void inputChanged(Viewer arg0, Object arg1, Object arg2) {
+				System.out.println("Input changed: old="+arg1+", new="+arg2);
+			}
+			
+			@Override
+			public void dispose() {
+				System.out.println("Disposing...");
+			}
+			
+			@Override
+			public Object[] getElements(Object arg0) {
+				ArrayList<String> names = (ArrayList<String>)arg0;
+				return names.toArray();
+			}
+		});
+		projectsListViewer.setInput(Storage.getInstance().getProjectNames());
+		projectsListViewer.setLabelProvider(new LabelProvider() {
+			public Image getImage(Object element) {
+				return null;
+			}
+			public String getText(Object element) {
+				return ((String)element);
+			}
+		});
+		projectsListViewer.refresh();
+//		//
+//		IObservableList itemsProjectsListObserveWidget = WidgetProperties.items().observe(projectsList);
+//		IObservableList storageProjects = BeanProperties.list(Storage.class, "projectNames").observe(Storage.getInstance());
+//		bindingContext.bindList(itemsProjectsListObserveWidget, storageProjects , null, null);
+//		//
+//		//
+//		IObservableList itemsUsersListObserveWidget = WidgetProperties.items().observe(usersList);
+//		IObservableList storageUsers = BeanProperties.list(Storage.class, "users").observe(Storage.getInstance());
+//		bindingContext.bindList(itemsUsersListObserveWidget, storageUsers , null, null);
+//		//
 		return bindingContext;
 	}
 }
