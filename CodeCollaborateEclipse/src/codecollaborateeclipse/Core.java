@@ -1,16 +1,25 @@
 package codecollaborateeclipse;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+
 import codecollaborateeclipse.connections.CCWebSocketConnector;
 import codecollaborateeclipse.document.DocumentManager;
 import codecollaborateeclipse.events.DocumentChangedListener;
 import codecollaborateeclipse.events.ResponseNotificationListener;
+import codecollaborateeclipse.models.FetchFilesRequest;
+import codecollaborateeclipse.models.FetchProjectsRequest;
 import codecollaborateeclipse.models.LoginRequest;
 import codecollaborateeclipse.models.Notification;
 import codecollaborateeclipse.models.PullFileRequest;
 import codecollaborateeclipse.models.Request;
 import codecollaborateeclipse.models.Response;
+import codecollaborateeclipse.models.Response.File;
+import codecollaborateeclipse.models.Response.Project;
 import codecollaborateeclipse.models.ServerMessage;
 import codecollaborateeclipse.preferences.PreferenceConstants;
+import codecollaborateeclipse.resources.ResourceManager;
 
 public class Core implements ResponseNotificationListener, DocumentChangedListener {
 	
@@ -27,13 +36,15 @@ public class Core implements ResponseNotificationListener, DocumentChangedListen
 	}
 	
 	public void begin() {
+//		System.out.println(ResourceManager.getWorkingDirectory());
 		// Set up the core to listen to the CCWSC and the Document Manager
+		ResourceManager.getFileMetadata();
 		connector.addResponseNotificationListener(this);
 		documentManager.addDocumentChangedListener(this);
 		
 		// get data from preferences
-		Storage.setUsername(Activator.getDefault().getPreferenceStore().getString(PreferenceConstants.P_USERNAME));
-		Storage.setPassword(Activator.getDefault().getPreferenceStore().getString(PreferenceConstants.P_PASSWORD));
+		Storage.getInstance().setUsername(Activator.getDefault().getPreferenceStore().getString(PreferenceConstants.P_USERNAME));//set("Username",Activator.getDefault().getPreferenceStore().getString(PreferenceConstants.P_USERNAME));
+		Storage.getInstance().setPassword(Activator.getDefault().getPreferenceStore().getString(PreferenceConstants.P_PASSWORD));//set("Password",Activator.getDefault().getPreferenceStore().getString(PreferenceConstants.P_PASSWORD));
 		
 		// TODO get data from metadata files
 		//ResourceManager.getFileMetadata();
@@ -57,7 +68,11 @@ public class Core implements ResponseNotificationListener, DocumentChangedListen
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        connector.fetchProjects();
         connector.pullDocument();
+    	Storage.getInstance().setConnectionStatus("Connected");
+//    	Storage.getInstance().getUsers().add("jello");
+//    	Storage.getInstance().firePropertyChange("users", Storage.getInstance().getUsers(), Storage.getInstance().getUsers());
 	}
 	
 	public void end() {
@@ -89,16 +104,14 @@ public class Core implements ResponseNotificationListener, DocumentChangedListen
     	}
     	if (request instanceof LoginRequest && response.getData() != null) {
     		System.out.println("Retrieving user details...");
-    		Storage.setToken(response.getData().getToken());
-    		System.out.println("Token: "+Storage.getToken());
+    		Storage.getInstance().setToken(response.getData().getToken());//set("Token", response.getData().getToken());
+    		System.out.println("Token: "+Storage.getInstance().getToken());//get("Token"));
     	} else if (request instanceof PullFileRequest && response.getData() != null) {
-//    		documentManager.flushFile(response.getData().getChanges(), response.getData().getBytes());
-//    		PatchData[] changes = response.getData().getChanges();
-//    		if (changes != null) {
-//	    		for (int i = 0; i < changes.length; i++) {
-//	    			documentManager.recievePatch(changes[i].getChanges());
-//	    		}
-//    		}
+    		documentManager.flushFile(response.getData().getChanges(), response.getData().getBytes());
+    	} else if (request instanceof FetchProjectsRequest && response.getData() != null) {
+    		populateProjectData(response.getData().getProjects());
+    	} else if (request instanceof FetchFilesRequest && response.getData() != null) {
+    		populateFileData(request.getResId(), response.getData().getFiles());
     	}
     	switch (response.getStatus()) {
     		case 1: return; 
@@ -153,6 +166,27 @@ public class Core implements ResponseNotificationListener, DocumentChangedListen
     			break;
     		default: break;
     	}
+    }
+    
+    private void populateProjectData(Project[] projects) {
+    	HashMap<String, Project> projectsList = new HashMap<String, Project>();
+    	ArrayList<String> projectNames = new ArrayList<String>();
+    	for (Project p : projects) {
+    		projectsList.put(p.getId(), p);
+    		projectNames.add(p.getName());
+    		connector.fetchFiles(p.getId());
+    	}
+    	Storage.getInstance().setProjects(projectsList);
+    	Storage.getInstance().setProjectNames(projectNames);
+    }
+    
+    private void populateFileData(String projId, File[] files) {
+    	if (files == null)
+    		return;
+    	Project p = Storage.getInstance().getProjects().get(projId);
+    	if (p == null)
+    		return;
+    	p.setFiles(new ArrayList<File>(Arrays.asList(files)));
     }
 	
 	public static Core getInstance() {

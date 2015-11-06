@@ -17,6 +17,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
 
 import codecollaborateeclipse.connections.CCWebSocketConnector;
 import codecollaborateeclipse.events.DocumentChangedListener;
+import codecollaborateeclipse.models.Response.PatchData;
 
 public class DocumentManager {
 
@@ -80,7 +81,7 @@ public class DocumentManager {
 				doc.removeDocumentListener(docListener);
 					try {
 						if (operation.equals("DELETE"))
-							doc.replace(start, 1, "");
+							doc.replace(start, edit.length(), "");
 						else
 							doc.replace(start, 0, edit);
 					} catch (BadLocationException e) {
@@ -108,6 +109,27 @@ public class DocumentManager {
 			throw new NullPointerException("Patch cannot be null");
 		for (DocumentChangedListener listeny : listeners) {
 			listeny.onDocumentModified(patch);
+		}
+	}
+
+	public void flushFile(PatchData[] changes, byte[] bytes) {
+		String docText = new String(bytes);
+		Display.getDefault().syncExec(new Runnable(){
+
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				doc.removeDocumentListener(docListener);
+				doc.set(docText);
+				doc.addDocumentListener(docListener);
+				
+			}
+			
+		});
+		if (changes != null) {
+    		for (int i = 0; i < changes.length; i++) {
+    			recievePatch(changes[i].getChanges());
+    		}
 		}
 	}
 }

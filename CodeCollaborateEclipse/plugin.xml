@@ -41,5 +41,8 @@
             class="codecollaborateeclipse.preferences.PreferenceInitializer">
       </initializer>
    </extension>
+   <extension
+         point="org.eclipse.core.resources.builders">
+   </extension>
 
 </plugin>

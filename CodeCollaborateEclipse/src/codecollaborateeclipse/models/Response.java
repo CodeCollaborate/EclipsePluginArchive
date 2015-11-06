@@ -1,13 +1,20 @@
 package codecollaborateeclipse.models;
 
+import java.util.ArrayList;
+import java.util.Map;
+
 import org.json.JSONArray;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 /**
  * Created by fahslaj on 10/22/2015.
  */
+@JsonInclude(Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown=true)
 public class Response extends ServerMessage {
     @JsonProperty("Status")
@@ -57,25 +64,47 @@ public class Response extends ServerMessage {
     @JsonIgnoreProperties(ignoreUnknown=true)
 	public static class ResponseData {
         @JsonProperty("FileBytes")
-        private Byte[] bytes;
+        private byte[] bytes;
 
         @JsonProperty("Changes")
         private PatchData[] changes;
 
         @JsonProperty("File")
         private String file;
+        
+        @JsonProperty("Files")
+        private File[] files;
 
         @JsonProperty("ProjectId")
         private String projectId;
 
         @JsonProperty("Token")
         private String token;
+        
+        @JsonProperty("Projects")
+        private Project[] projects;
+        
+        public File[] getFiles() {
+			return files;
+		}
 
-        public Byte[] getBytes() {
+		public void setFiles(File[] files) {
+			this.files = files;
+		}
+
+		public Project[] getProjects() {
+        	return projects;
+        }
+        
+        public void setProjects(Project[] projects) {
+        	this.projects = projects;
+        }
+
+        public byte[] getBytes() {
             return bytes;
         }
 
-        public void setBytes(Byte[] bytes) {
+        public void setBytes(byte[] bytes) {
             this.bytes = bytes;
         }
 
@@ -178,6 +207,112 @@ public class Response extends ServerMessage {
 
 		public void setDate(String date) {
 			this.date = date;
+		}
+    }
+    
+    @JsonIgnoreProperties(ignoreUnknown=true)
+    public static class Project {
+    	
+    	@JsonProperty("Id")
+    	private String id;
+    	
+    	@JsonProperty("Name")
+    	private String name;
+    	
+    	@JsonProperty("Permissions")
+    	private Map<String, Integer> permissions;
+    	
+    	@JsonIgnore
+    	private ArrayList<File> files;
+
+		public ArrayList<File> getFiles() {
+			return files;
+		}
+
+		public void setFiles(ArrayList<File> files) {
+			this.files = files;
+		}
+
+		public String getId() {
+			return id;
+		}
+
+		public void setId(String id) {
+			this.id = id;
+		}
+
+		public String getName() {
+			return name;
+		}
+
+		public void setName(String name) {
+			this.name = name;
+		}
+
+		public Map<String, Integer> getPermissions() {
+			return permissions;
+		}
+
+		public void setPermissions(Map<String, Integer> permissions) {
+			this.permissions = permissions;
+		}
+    }
+    
+    @JsonIgnoreProperties(ignoreUnknown=true)
+    public static class File {
+    	@JsonProperty("Id")
+    	private String id;
+    	
+    	@JsonProperty("Name")
+    	private String name;
+    	
+    	@JsonProperty("RelativePath")
+    	private String path;
+    	
+    	@JsonProperty("Version")
+    	private String version;
+    	
+    	@JsonProperty("Project")
+    	private String projectId;
+
+		public String getId() {
+			return id;
+		}
+
+		public void setId(String id) {
+			this.id = id;
+		}
+
+		public String getName() {
+			return name;
+		}
+
+		public void setName(String name) {
+			this.name = name;
+		}
+
+		public String getPath() {
+			return path;
+		}
+
+		public void setPath(String path) {
+			this.path = path;
+		}
+
+		public String getVersion() {
+			return version;
+		}
+
+		public void setVersion(String version) {
+			this.version = version;
+		}
+
+		public String getProjectId() {
+			return projectId;
+		}
+
+		public void setProjectId(String projectId) {
+			this.projectId = projectId;
 		}
     }
 }

@@ -8,6 +8,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import codecollaborateeclipse.Storage;
 import codecollaborateeclipse.events.ResponseNotificationListener;
+import codecollaborateeclipse.models.FetchFilesRequest;
+import codecollaborateeclipse.models.FetchProjectsRequest;
 import codecollaborateeclipse.models.FileChangeRequest;
 import codecollaborateeclipse.models.LoginRequest;
 import codecollaborateeclipse.models.Notification;
@@ -51,8 +53,8 @@ public class CCWebSocketConnector {
         fcr.setResId(ResId);
         fcr.setFileVersion(FileVersion);
         fcr.setChanges(Changes);
-        fcr.setUsername(Storage.getUsername());
-        fcr.setToken(Storage.getToken());
+        fcr.setUsername(Storage.getInstance().getUsername());//(String)Storage.get("Username"));
+        fcr.setToken(Storage.getInstance().getToken());//(String)Storage.get("Token"));
         requestMap.put(fcr.getTag(), fcr);
     	try {
             socket.sendMessage(mapper.writeValueAsString(fcr));
@@ -65,8 +67,8 @@ public class CCWebSocketConnector {
 
     public boolean login() {
         LoginRequest lr = new LoginRequest(getTag());
-        lr.setUsername(Storage.getUsername());
-        lr.setPassword(Storage.getPassword());
+        lr.setUsername(Storage.getInstance().getUsername());//(String)Storage.get("Username"));
+        lr.setPassword(Storage.getInstance().getPassword());//(String)Storage.get("Password"));
         requestMap.put(lr.getTag(),  lr);
     	try {
             socket.sendMessage(mapper.writeValueAsString(lr));
@@ -78,11 +80,11 @@ public class CCWebSocketConnector {
     }
 
     public boolean subscribe() {
-        String[] projects = {"5629a063111aeb63cf000001"};
+        String project = "5629a063111aeb63cf000001";
         SubscribeRequest sr = new SubscribeRequest(getTag());
-        sr.setUsername(Storage.getUsername());
-        sr.setToken(Storage.getToken());
-        sr.setProjects(projects);
+        sr.setUsername(Storage.getInstance().getUsername());//(String)Storage.get("Username"));
+        sr.setToken(Storage.getInstance().getToken());//(String)Storage.get("Token"));
+        sr.setResId(project);
         requestMap.put(sr.getTag(), sr);
         try {
             socket.sendMessage(mapper.writeValueAsString(sr));
@@ -91,6 +93,35 @@ public class CCWebSocketConnector {
             return false;
         }
         return true;
+    }
+    
+    public boolean fetchProjects() {
+    	FetchProjectsRequest projReq = new FetchProjectsRequest(getTag());
+    	projReq.setUsername(Storage.getInstance().getUsername());
+    	projReq.setToken(Storage.getInstance().getToken());
+    	requestMap.put(projReq.getTag(), projReq);
+    	try {
+    		socket.sendMessage(mapper.writeValueAsString(projReq));
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    		return false;
+    	}
+    	return true;
+    }
+    
+    public boolean fetchFiles(String projectId) {
+    	FetchFilesRequest fileRequest = new FetchFilesRequest(getTag());
+    	fileRequest.setUsername(Storage.getInstance().getUsername());
+    	fileRequest.setToken(Storage.getInstance().getToken());
+    	fileRequest.setResId(projectId);
+    	requestMap.put(fileRequest.getTag(), fileRequest);
+    	try {
+    		socket.sendMessage(mapper.writeValueAsString(fileRequest));
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    		return false;
+    	}
+    	return true;
     }
 
     public boolean connect() {
@@ -180,8 +211,8 @@ public class CCWebSocketConnector {
     public boolean pullDocument(String resId) {
         PullFileRequest pfr = new PullFileRequest(getTag());
         pfr.setResId(resId);
-        pfr.setUsername(Storage.getUsername());
-        pfr.setToken(Storage.getToken());
+        pfr.setUsername(Storage.getInstance().getUsername());//(String)Storage.get("Username"));
+        pfr.setToken(Storage.getInstance().getToken());//(String)Storage.get("Token"));
         requestMap.put(pfr.getTag(), pfr);
     	try {
             socket.sendMessage(mapper.writeValueAsString(pfr));

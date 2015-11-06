@@ -37,9 +37,9 @@ public class Preferences
 			@Override
 			public void propertyChange(PropertyChangeEvent arg0) {
 				if (arg0.getProperty().equals(PreferenceConstants.P_USERNAME)) {
-					Storage.setUsername(arg0.getNewValue().toString());
+					Storage.getInstance().setUsername(arg0.getNewValue().toString());//set("Username", arg0.getNewValue().toString());
 				} else if (arg0.getProperty().equals(PreferenceConstants.P_PASSWORD)) {
-					Storage.setPassword(arg0.getNewValue().toString());
+					Storage.getInstance().setPassword(arg0.getNewValue().toString());//set("Password", arg0.getNewValue().toString());
 				}
 			}
 		});
