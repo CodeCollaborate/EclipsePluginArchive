@@ -41,11 +41,11 @@ public class CCWebSocketConnector {
     URI uri;
     
     public boolean sendPatch() {
-    	return sendPatch ("@@ -40,16 +40,17 @@\\n almost i\\n+t\\n n shape");
+    	return sendPatch ("5629a0c2111aeb63cf000002", "@@ -40,16 +40,17 @@\\n almost i\\n+t\\n n shape");
     }
     
-    public boolean sendPatch(String patch) {
-    	String ResId = "5629a0c2111aeb63cf000002";
+    public boolean sendPatch(String ResId, String patch) {
+    	//String ResId = "5629a0c2111aeb63cf000002";
     	long FileVersion = System.currentTimeMillis();
     	String Changes = patch;//.replaceAll("\n", "");
     	
@@ -79,7 +79,7 @@ public class CCWebSocketConnector {
         return true;
     }
 
-    public boolean subscribe() {
+    public boolean subscribe(String projectId) {
         String project = "5629a063111aeb63cf000001";
         SubscribeRequest sr = new SubscribeRequest(getTag());
         sr.setUsername(Storage.getInstance().getUsername());//(String)Storage.get("Username"));

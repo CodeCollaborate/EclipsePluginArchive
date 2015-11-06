@@ -3,8 +3,10 @@ package codecollaborateeclipse;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 
+import codecollaborateeclipse.events.DisplayListener;
 import codecollaborateeclipse.models.Response.File;
 import codecollaborateeclipse.models.Response.Project;
 
@@ -23,13 +25,17 @@ public class Storage {
 //		return storage.resources.get(key);
 //	}
 	
-	private ArrayList<String> users = new ArrayList<String>();
-	private ArrayList<String> projectNames = new ArrayList<String>();
+	private DisplayList<String> users = new DisplayList<String>();
+	private DisplayList<String> projectNames = new DisplayList<String>();
 	private HashMap<String, Project> projects = new HashMap<String, Project>();
 	private String username;
 	private String password;
 	private String connectionStatus = "Not connected";
 	private String token;
+	
+	public Project[] getProjectsArray() {
+		return projects.values().toArray(new Project[0]);
+	}
 
 	public HashMap<String, Project> getProjects() {
 		return projects;
@@ -39,20 +45,20 @@ public class Storage {
 		firePropertyChange("projects", this.projects, this.projects = projects);
 	}
 
-	public ArrayList<String> getUsers() {
+	public DisplayList<String> getUsers() {
 		return users;
 	}
 
-	public void setUsers(ArrayList<String> users) {
+	public void setUsers(DisplayList<String> users) {
 		firePropertyChange("users", this.users, this.users = users);
 	}
 
-	public ArrayList<String> getProjectNames() {
+	public DisplayList<String> getProjectNames() {
 		return projectNames;
 	}
 
-	public void setProjectNames(ArrayList<String> projects) {
-		firePropertyChange("projects", this.projectNames, this.projectNames = projects);
+	public void setProjectNames(DisplayList<String> projects) {
+		firePropertyChange("projectNames", this.projectNames, this.projectNames = projects);
 	}
 
 	public String getUsername() {
@@ -106,48 +112,49 @@ public class Storage {
 	public static Storage getInstance() {
 		return storage;
 	}
-}
+	
+	public static class DisplayList<E> extends ArrayList<E> {
+		private ArrayList<DisplayListener> listeners = new ArrayList<DisplayListener>();
+		
+		public void addDisplayListener(DisplayListener listener) {
+			listeners.add(listener);
+		}
+		
+		public void removeDisplayListeners() {
+			listeners = new ArrayList<DisplayListener>();
+		}
+		
+		public void notifyListeners() {
+			for (DisplayListener l : listeners) {
+				l.onNotification(this);
+			}
+		}
+		
+		@Override
+		public boolean add(E object) {
+			boolean b = super.add(object);
+		    notifyListeners();
+		    return b;
+		};
 
-//	private static ArrayList<String> users;
-//	private static ArrayList<String> projects;
-//	private static String username;
-//	private static String password;
-//	private static String connectionStatus;
-//	private static String token;
-//	
-//	public static ArrayList<String> getUsers() {
-//		return users;
-//	}
-//	public static void setUsers(ArrayList<String> users) {
-//		Storage.users = users;
-//	}
-//	public static ArrayList<String> getProjects() {
-//		return projects;
-//	}
-//	public static void setProjects(ArrayList<String> projects) {
-//		Storage.projects = projects;
-//	}
-//	public static String getUsername() {
-//		return username;
-//	}
-//	public static void setUsername(String username) {
-//		Storage.username = username;
-//	}
-//	public static String getPassword() {
-//		return password;
-//	}
-//	public static void setPassword(String password) {
-//		Storage.password = password;
-//	}
-//	public static String getConnectionStatus() {
-//		return connectionStatus;
-//	}
-//	public static void setConnectionStatus(String connectionStatus) {
-//		Storage.connectionStatus = connectionStatus;
-//	}
-//	public static String getToken() {
-//		return token;
-//	}
-//	public static void setToken(String token) {
-//		Storage.token = token;
-//	}
+		@Override
+		public void add(int index, E object) {
+		    super.add(index, object);
+		    notifyListeners();
+		};
+		
+		@Override
+		public boolean addAll(Collection<? extends E> c) {
+			boolean b = super.addAll(c);
+			notifyListeners();
+			return b;
+		}
+
+		@Override
+		public E remove(int index) {
+		    E e = super.remove(index);
+		    notifyListeners();
+		    return e;
+		}
+	}
+}

@@ -1,23 +1,28 @@
 package codecollaborateeclipse.document;
 
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.PlatformUI;
-
-import java.util.ArrayList;
-
-import javax.print.Doc;
-
+import org.eclipse.ui.texteditor.ITextEditor;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.texteditor.ITextEditor;
 
+import java.util.ArrayList;
+
+import javax.print.Doc;
+
+import codecollaborateeclipse.Storage;
 import codecollaborateeclipse.connections.CCWebSocketConnector;
 import codecollaborateeclipse.events.DocumentChangedListener;
+import codecollaborateeclipse.models.Response.File;
 import codecollaborateeclipse.models.Response.PatchData;
+import codecollaborateeclipse.models.Response.Project;
+import codecollaborateeclipse.resources.ResourceManager;
 
 public class DocumentManager {
 
@@ -43,12 +48,12 @@ public class DocumentManager {
 		if (docListener == null) {
 			docListener = new IDocumentListener() {
 				String oldDoc = "";
-	
+				String fileId = getActiveFileId();
 				@Override
 				public void documentChanged(DocumentEvent event) {
 					// System.out.println("Change happened: " + event.toString());
 					String p = patchy.createPatchString(oldDoc, doc.get());
-					DocumentManager.this.notify(p);
+					DocumentManager.this.notify(fileId, p);
 					// System.out.println(p);
 				}
 	
@@ -61,6 +66,46 @@ public class DocumentManager {
 			};
 			this.doc.addDocumentListener(docListener);
 		}
+	}
+	
+	public String getFullPathOfActiveDocument() {
+		
+		String path = ((IFileEditorInput) this.input).getFile().getRawLocation().toString();
+		// + "/" + ((IFileEditorInput) this.input).getFile().getName();
+		return path;
+		
+	}
+	
+	public String getRelativePathOfActiveDocument() {
+		String full = getFullPathOfActiveDocument();
+		String wd = ResourceManager.getWorkingDirectory();
+		return full.substring(wd.length()+1, full.length());
+	}
+	
+	public String getActiveProjectId() {
+		String relativePath = getRelativePathOfActiveDocument();
+		for (Project project : Storage.getInstance().getProjectsArray()) {
+			if (project.getFiles() != null) {
+				for (File f : project.getFiles()) {
+					if (relativePath.equals(project.getName() + "/" + f.getPath() + f.getName()))
+						return project.getId();
+				}
+			}
+		}
+		return null;
+	}
+	
+	public String getActiveFileId() {
+		String relativePath = getRelativePathOfActiveDocument();
+		for (Project project : Storage.getInstance().getProjectsArray()) {
+			if (project.getFiles() != null) {
+				for (File f : project.getFiles()) {
+					if (relativePath.equals(project.getName() + "/" + f.getPath() + f.getName()))
+						return f.getId();
+				}
+			}
+		}
+		return null;
 	}
 
 	public void recievePatch(String msg) {
@@ -98,17 +143,19 @@ public class DocumentManager {
 
 	public void close() {
 		closed = true;
+		doc.removeDocumentListener(docListener);
+		docListener = null;
 	}
 	
 	public void addDocumentChangedListener(DocumentChangedListener listener) {
 		listeners.add(listener);
 	}
 	
-	public void notify(String patch) {
+	public void notify(String resId, String patch) {
 		if (patch == null)
 			throw new NullPointerException("Patch cannot be null");
 		for (DocumentChangedListener listeny : listeners) {
-			listeny.onDocumentModified(patch);
+			listeny.onDocumentModified(resId, patch);
 		}
 	}
 

@@ -1,5 +1,7 @@
 package codecollaborateeclipse.ui;
 
+import java.util.ArrayList;
+
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
@@ -8,7 +10,9 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.core.databinding.DataBindingContext;
+import org.eclipse.core.databinding.UpdateListStrategy;
 import org.eclipse.core.databinding.beans.BeanProperties;
+import org.eclipse.core.databinding.beans.BeansObservables;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
@@ -16,6 +20,9 @@ import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
+import org.eclipse.jface.databinding.viewers.ObservableSetContentProvider;
+import org.eclipse.jface.databinding.viewers.ViewerSupport;
+import org.eclipse.jface.internal.databinding.provisional.viewers.ViewerLabelProvider;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.CoolBar;
 import org.eclipse.swt.widgets.ToolBar;
@@ -25,22 +32,31 @@ import org.eclipse.ui.part.ViewPart;
 
 import codecollaborateeclipse.Core;
 import codecollaborateeclipse.Storage;
+import codecollaborateeclipse.Storage.DisplayList;
+import codecollaborateeclipse.events.DisplayListener;
 
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.beans.PojoProperties;
+import org.eclipse.jface.viewers.IBaseLabelProvider;
+import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.ListViewer;
+import org.eclipse.jface.viewers.Viewer;
 
 public class ControlPanel extends ViewPart {
 	private DataBindingContext m_bindingContext;
-	ListViewer projectsListViewer;
-	ListViewer usersListViewer;
 	private Label lblInsert;
+	private List usersList;
+	private List projectsList;
 
 	public ControlPanel() {
 		
@@ -61,7 +77,7 @@ public class ControlPanel extends ViewPart {
 		composite.setBounds(0, 0, 974, 288);
 		
 		Label lblProjects = new Label(composite, SWT.NONE);
-		lblProjects.setBounds(10, 20, 42, 19);
+		lblProjects.setBounds(10, 20, 55, 19);
 		lblProjects.setText("Projects");
 		
 		Label lblUsers = new Label(composite, SWT.NONE);
@@ -109,13 +125,22 @@ public class ControlPanel extends ViewPart {
 		btnDisconnect.setBounds(734, 5, 85, 29);
 		btnDisconnect.setText("Disconnect");
 		
-		projectsListViewer = new ListViewer(composite, SWT.BORDER | SWT.V_SCROLL);
-		List projectList = projectsListViewer.getList();
-		projectList.setBounds(10, 45, 472, 222);
+		Button btnTest = new Button(composite, SWT.NONE);
+		btnTest.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseDown(MouseEvent e) {
+				Storage.getInstance().getUsers().add("New User!");
+				usersList.redraw();
+			}
+		});
+		btnTest.setBounds(92, 10, 85, 29);
+		btnTest.setText("Test");
 		
-		usersListViewer = new ListViewer(composite, SWT.BORDER | SWT.V_SCROLL);
-		List userList = usersListViewer.getList();
-		userList.setBounds(488, 45, 476, 222);
+		projectsList = new List(composite, SWT.BORDER);
+		projectsList.setBounds(10, 45, 458, 222);
+		
+		usersList = new List(composite, SWT.BORDER);
+		usersList.setBounds(488, 45, 476, 222);
 		m_bindingContext = initDataBindings();
 		
 	}
@@ -126,12 +151,16 @@ public class ControlPanel extends ViewPart {
 		IObservableValue observeConnectionStatus = BeanProperties.value(Storage.class, "connectionStatus").observe(Storage.getInstance());
 		bindingContext.bindValue(observeTextLblInsertObserveWidget, observeConnectionStatus, null, null);
 		//
-//		ObservableListContentProvider usersContentProvider = new ObservableListContentProvider();
-//		usersListViewer.setContentProvider(usersContentProvider);
-//		IObservableSet knownUsers = usersContentProvider.getKnownElements();
-//		final IObservableMap usersMap = BeanProperties.value(Storage.class, "users").observeDetail(knownUsers);
-//		ILabelProvider usersLabelProvider = new ObservableMapLabelProvider(usersMap);
-//		usersListViewer.setLabelProvider(usersLabelProvider);
+		//
+		IObservableList itemsProjectsListObserveWidget = WidgetProperties.items().observe(projectsList);
+		IObservableList storageProjects = BeanProperties.list(Storage.class, "projectNames").observe(Storage.getInstance());
+		bindingContext.bindList(itemsProjectsListObserveWidget, storageProjects , null, null);
+		//
+		//
+		IObservableList itemsUsersListObserveWidget = WidgetProperties.items().observe(usersList);
+		IObservableList storageUsers = BeanProperties.list(Storage.class, "users").observe(Storage.getInstance());
+		bindingContext.bindList(itemsUsersListObserveWidget, storageUsers , null, null);
+		//
 		return bindingContext;
 	}
 }

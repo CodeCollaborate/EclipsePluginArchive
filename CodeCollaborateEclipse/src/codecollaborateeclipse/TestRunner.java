@@ -22,7 +22,7 @@ public class TestRunner {
             e.printStackTrace();
         }
         connector.login();
-        connector.subscribe();
+        connector.subscribe(null);
         connector.sendPatch();
         connector.close();
     }

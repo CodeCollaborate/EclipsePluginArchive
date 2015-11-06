@@ -222,14 +222,14 @@ public class Response extends ServerMessage {
     	@JsonProperty("Permissions")
     	private Map<String, Integer> permissions;
     	
-    	@JsonIgnore
-    	private ArrayList<File> files;
+    	@JsonProperty("Files")
+    	private File[] files;
 
-		public ArrayList<File> getFiles() {
+		public File[] getFiles() {
 			return files;
 		}
 
-		public void setFiles(ArrayList<File> files) {
+		public void setFiles(File[] files) {
 			this.files = files;
 		}
 
