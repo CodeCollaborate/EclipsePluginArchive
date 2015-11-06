@@ -144,7 +144,7 @@ public class Core implements ResponseNotificationListener, DocumentChangedListen
     		case -308: UIManager.showInfoDialog("Error -308", "Error creating file: invalid file path.");break; //error creating file: invalid file path
     			
     		case -400: UIManager.showInfoDialog("Error -400", "Error inserting change: internal error.");break; //error inserting change: internal error
-    		case -401: UIManager.showInfoDialog("Error -401", "Error inserting change: duplicate version number.");break; //error inserting change: duplicate version number
+    		case -401: connector.sendPatch(request.getResId(), request.getChanges()); break;//UIManager.showInfoDialog("Error -401", "Error inserting change: duplicate version number.");break; //error inserting change: duplicate version number
     		case -402: UIManager.showInfoDialog("Error -402", "Error reading change: internal error.");break; //error reading change: internal error
     		case -420: UIManager.showInfoDialog("Error -420", "Error, too blazed.");break; //error, too blazed
     	}
