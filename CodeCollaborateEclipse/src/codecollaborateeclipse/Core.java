@@ -62,6 +62,7 @@ public class Core implements ResponseNotificationListener, DocumentChangedListen
         //documentManager.getActiveDocument();
         connector.fetchProjects();
         sleep(2000);
+        // documentManager.generateDocumentsForProjects(); // generate document listeners
         connector.subscribe(documentManager.getActiveProjectId()); // change to current project
         documentManager.listen();
         sleep(1000);
@@ -74,6 +75,10 @@ public class Core implements ResponseNotificationListener, DocumentChangedListen
 	public void end() {
 		connector.close();
 		documentManager.close();
+		connector = null;
+		documentManager = null;
+		Storage.getInstance().getProjectNames().removeAll(Storage.getInstance().getProjectNames());
+		Storage.getInstance().getUsers().removeAll(Storage.getInstance().getUsers());
 	}
 
 	@Override

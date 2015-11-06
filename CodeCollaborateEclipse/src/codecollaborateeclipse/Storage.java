@@ -149,6 +149,13 @@ public class Storage {
 			notifyListeners();
 			return b;
 		}
+		
+		@Override
+		public boolean removeAll(Collection<?> c) {
+			boolean b = super.removeAll(c);
+			notifyListeners();
+			return b;
+		}
 
 		@Override
 		public E remove(int index) {

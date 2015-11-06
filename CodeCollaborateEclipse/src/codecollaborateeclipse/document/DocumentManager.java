@@ -142,6 +142,7 @@ public class DocumentManager {
 	}
 
 	public void close() {
+		System.out.println("closing");
 		closed = true;
 		doc.removeDocumentListener(docListener);
 		docListener = null;
