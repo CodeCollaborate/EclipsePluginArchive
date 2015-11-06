@@ -25,6 +25,7 @@ import org.eclipse.jface.databinding.viewers.ViewerSupport;
 import org.eclipse.jface.internal.databinding.provisional.viewers.ViewerLabelProvider;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.CoolBar;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.dialogs.ProjectLocationMoveDialog;
@@ -210,6 +211,30 @@ public class ControlPanel extends ViewPart {
 			}
 		});
 		projectsListViewer.refresh();
+		Storage.getInstance().getProjectNames().addDisplayListener(new DisplayListener() {
+			
+			@Override
+			public void onNotification(DisplayList list) {
+				Display.getDefault().asyncExec(new Runnable() {
+				    @Override
+				    public void run() {
+				        projectsListViewer.refresh();
+				    }
+				});
+			}
+		});
+		Storage.getInstance().getUsers().addDisplayListener(new DisplayListener() {
+			
+			@Override
+			public void onNotification(DisplayList list) {
+				Display.getDefault().asyncExec(new Runnable() {
+				    @Override
+				    public void run() {
+				        usersListViewer.refresh();
+				    }
+				});
+			}
+		});
 //		//
 //		IObservableList itemsProjectsListObserveWidget = WidgetProperties.items().observe(projectsList);
 //		IObservableList storageProjects = BeanProperties.list(Storage.class, "projectNames").observe(Storage.getInstance());
