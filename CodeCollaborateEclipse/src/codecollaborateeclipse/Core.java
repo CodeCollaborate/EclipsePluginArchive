@@ -159,7 +159,7 @@ public class Core implements ResponseNotificationListener, DocumentChangedListen
     		case "User": break;
     		case "File": 
     			if (action.equals("Change")) {
-    				documentManager.recievePatch(n.getData().getChanges());
+    				documentManager.recievePatch(n.getResId(), n.getData().getChanges());
     			}
     			break;
     		case "Project": 

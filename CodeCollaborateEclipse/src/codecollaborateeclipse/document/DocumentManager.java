@@ -31,6 +31,7 @@ public class DocumentManager {
 	private IEditorPart editor;
 	private IEditorInput input;
 	private IDocument doc;
+	private String fileId;
 
 	private IDocumentListener docListener;
 	private boolean closed;
@@ -45,10 +46,11 @@ public class DocumentManager {
 
 	public void listen() {
 		closed = false;
+		fileId = getActiveFileId();
 		if (docListener == null) {
 			docListener = new IDocumentListener() {
 				String oldDoc = "";
-				String fileId = getActiveFileId();
+//				String fileId = getActiveFileId();
 				@Override
 				public void documentChanged(DocumentEvent event) {
 					// System.out.println("Change happened: " + event.toString());
@@ -108,8 +110,9 @@ public class DocumentManager {
 		return null;
 	}
 
-	public void recievePatch(String msg) {
-
+	public void recievePatch(String resId, String msg) {
+		if (!resId.equals(fileId))
+			return;
 		Object[] textEdit = this.patchy.recievePatch(msg, this.doc.get());
 		String edit = (String) textEdit[0];
 		String operation = (String) textEdit[1];
@@ -176,7 +179,7 @@ public class DocumentManager {
 		});
 		if (changes != null) {
     		for (int i = 0; i < changes.length; i++) {
-    			recievePatch(changes[i].getChanges());
+    			recievePatch(fileId, changes[i].getChanges());
     		}
 		}
 	}
